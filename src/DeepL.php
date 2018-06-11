@@ -101,6 +101,8 @@ class DeepL
      * @param $sourceLanguage
      * @param $destinationLanguage
      *
+     * @return boolean
+     *
      * @throws DeepLException
      */
     protected function checkLanguages($sourceLanguage, $destinationLanguage)
@@ -113,9 +115,11 @@ class DeepL
 
         $destinationLanguage = strtoupper($destinationLanguage);
 
-        if (!in_array($destinationLanguage, $this->destinationLanguage)) {
+        if (!in_array($destinationLanguage, $this->destinationLanguages)) {
             throw new DeepLException(sprintf('The language "%s" is not supported as destination language.', $sourceLanguage));
         }
+
+        return true;
     }
 
     /**
@@ -136,11 +140,11 @@ class DeepL
         $url = DeepL::API_URL . '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
 
         foreach ($text as $textElement) {
-            $url .= '&' . sprintf(DeepL::API_URL_TEXT, $textElement);
+            $url .= '&' . sprintf(DeepL::API_URL_TEXT, rawurlencode($textElement));
         }
 
-        $url .= '&' . sprintf(DeepL::API_URL_SOURCE_LANG, $sourceLanguage);
-        $url .= '&' . sprintf(DeepL::API_URL_DESTINATION_LANG, $destinationLanguage);
+        $url .= '&' . sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
+        $url .= '&' . sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
 
         return $url;
     }
