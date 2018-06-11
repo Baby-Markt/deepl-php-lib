@@ -9,5 +9,10 @@
             "email": "jonczek@babymarkt.de"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "BabyMarkt\\DeepL\\": "src/"
+        }
+    }
 }
