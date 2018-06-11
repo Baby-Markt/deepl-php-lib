@@ -82,4 +82,40 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedString, $return);
     }
+
+    /**
+     * Test translate()
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testTranslate()
+    {
+        return;
+
+        $authKey    = 'INSERT YOUR AUTH KEY HERE';
+        $germanText = 'Hallo Welt';
+
+        $deepl     = new DeepL($authKey);
+
+        $response = $deepl->translate($germanText);
+
+        $this->assertEquals('Hello World', $response['translations'][0]['text']);
+    }
+
+    /**
+     * Test translate()
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testTranslateException()
+    {
+        $authKey    = '123456';
+        $germanText = 'Hallo Welt';
+
+        $deepl     = new DeepL($authKey);
+
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+
+        $response = $deepl->translate($germanText);
+    }
 }

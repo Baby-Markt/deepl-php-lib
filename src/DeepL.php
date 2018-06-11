@@ -2,30 +2,35 @@
 
 namespace BabyMarkt\DeepL;
 
+/**
+ * DeepL API client library
+ *
+ * @package BabyMarkt\DeepL
+ */
 class DeepL
 {
     /**
-     * API URL
+     * API v1 URL
      */
     const API_URL                  = 'https://api.deepl.com/v1/translate';
 
     /**
-     * API URL: Parameter auth_key
+     * API v1  URL: Parameter auth_key
      */
     const API_URL_AUTH_KEY         = 'auth_key=%s';
 
     /**
-     * API URL: Parameter text
+     * API v1 URL: Parameter text
      */
     const API_URL_TEXT             = 'text=%s';
 
     /**
-     * API URL: Parameter source_lang
+     * API v1 URL: Parameter source_lang
      */
     const API_URL_SOURCE_LANG      = 'source_lang=%s';
 
     /**
-     * API URL: Parameter target_lang
+     * API v1 URL: Parameter target_lang
      */
     const API_URL_DESTINATION_LANG = 'target_lang=%s';
 
@@ -67,6 +72,13 @@ class DeepL
     protected $authKey;
 
     /**
+     * cURL resource
+     *
+     * @var resource
+     */
+    protected $curl;
+
+    /**
      * DeepL constructor
      *
      * @param $authKey
@@ -74,18 +86,33 @@ class DeepL
     public function __construct($authKey)
     {
         $this->authKey = $authKey;
+        $this->curl    = curl_init();
+
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
+    }
+
+    /**
+     * DeepL Destructor
+     */
+    public function __destruct()
+    {
+        if ($this->curl && is_resource($this->curl)) {
+            curl_close($this->curl);
+        }
     }
 
     /**
      * Translate the text string or array from source to destination language
      *
-     * @param $text
-     * @param $sourceLanguage
-     * @param $destinationLanguage
+     * @param $text                string|string[]
+     * @param $sourceLanguage      string
+     * @param $destinationLanguage string
      *
      * @return array
+     *
+     * @throws DeepLException
      */
-    public function translate($text, $sourceLanguage, $destinationLanguage)
+    public function translate($text, $sourceLanguage = 'de', $destinationLanguage = 'en')
     {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
@@ -154,29 +181,30 @@ class DeepL
      *
      * @param $url
      *
-     * @return mixed
+     * @return array
      *
      * @throws DeepLException
      */
     protected function request($url)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $output = curl_exec($ch);
-        curl_close($ch);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        $response = curl_exec($this->curl);
 
         // if there was a curl error
-        if ($output == false) {
+        if ($response == false) {
 
-            $errorString = curl_error($ch);
-            $errorNumber = curl_errno($ch);
+            $errorString = curl_error($this->curl);
+            $errorNumber = curl_errno($this->curl);
+
+            if (!$errorString) {
+                $errorString = 'There was a cURL Response Error - please check your DeepL Auth Key.';
+            }
 
             throw new DeepLException($errorString, $errorNumber);
         }
 
-        $json = json_decode($output);
+        $translationsArray = json_decode($response, true);
 
-        return $json;
+        return $translationsArray;
     }
 }
