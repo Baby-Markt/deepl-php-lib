@@ -7,7 +7,7 @@ Simple PHP Library for DeepL API.
 Use composer if you want to use this library in your project.
 
 ```bash
-composer require babymarkt/deepl
+composer require babymarkt/deepl-php-lib
 ```
 
 ## Usage
