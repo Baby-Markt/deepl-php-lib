@@ -46,7 +46,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $checkLanguages = self::getMethod('\BabyMarkt\DeepL\DeepL', 'checkLanguages');
 
-        $this->setExpectedException(DeepLException::class);
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
         $checkLanguages->invokeArgs($deepl, array('fo', 'en'));
     }
@@ -61,7 +61,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $checkLanguages = self::getMethod('\BabyMarkt\DeepL\DeepL', 'checkLanguages');
 
-        $this->setExpectedException(DeepLException::class);
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
         $checkLanguages->invokeArgs($deepl, array('de', 'fo'));
     }
