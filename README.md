@@ -4,6 +4,8 @@ Simple PHP Library for DeepL API.
 
 ## Installation
 
+Use composer if you want to use this library in your project.
+
 ```bash
 composer require babymarkt/deepl
 ```
@@ -21,14 +23,26 @@ print_r($result);
 
 ## Tests
 
-First, create phpunit.xml from dist file.
+Clone the repository.
+
+```bash
+git clone git@github.com:Baby-Markt/deepl-php-lib.git
+```
+
+Create phpunit.xml from dist file.
 
 ```bash
 cp phpunit.xml.dist phpunit.xml
 ```
 
+Install composer dependencies.
+
+```bash
+composer install
+```
+
 Now, run PHPUnit Tests.
 
-```
-php phpunit-4.8.phar
+```bash
+vendor/bin/phpunit
 ```
