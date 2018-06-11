@@ -1,0 +1,13 @@
+{
+    "name": "babymarkt/deepl",
+    "description": "Simple PHP Library for DeepL API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arkadius Jonczek",
+            "email": "jonczek@babymarkt.de"
+        }
+    ],
+    "require": {}
+}
