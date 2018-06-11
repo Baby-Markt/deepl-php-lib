@@ -4,6 +4,14 @@ namespace BabyMarkt\DeepL;
 
 class DeepLTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Get protected method
+     *
+     * @param $className
+     * @param $methodName
+     *
+     * @return \ReflectionMethod
+     */
     protected static function getMethod($className, $methodName)
     {
         $class = new \ReflectionClass($className);
@@ -13,6 +21,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         return $method;
     }
 
+    /**
+     * Test checkLanguages()
+     */
     public function testCheckLanguages()
     {
         $authKey = '123456';
@@ -25,6 +36,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($return);
     }
 
+    /**
+     * Test checkLanguages() with exception for source language
+     */
     public function testCheckLanguagesSourceLanguageException()
     {
         $authKey = '123456';
@@ -37,6 +51,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $checkLanguages->invokeArgs($deepl, array('fo', 'en'));
     }
 
+    /**
+     * Test checkLanguages() with exception for destination language
+     */
     public function testCheckLanguagesDestinationLanguageException()
     {
         $authKey = '123456';
@@ -49,6 +66,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $checkLanguages->invokeArgs($deepl, array('de', 'fo'));
     }
 
+    /**
+     * Test buildUrl()
+     */
     public function testBuildUrl()
     {
         $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&text=Hallo%20Welt&source_lang=de&target_lang=en';
