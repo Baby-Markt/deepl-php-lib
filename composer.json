@@ -9,10 +9,21 @@
             "email": "jonczek@babymarkt.de"
         }
     ],
-    "require": {},
+    "require": {
+            "php": ">=5.3"
+    },
+    "require-dev": {
+        "php": ">=5.3",
+        "phpunit/phpunit": "4.8"
+    },
     "autoload": {
         "psr-4": {
             "BabyMarkt\\DeepL\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BabyMarkt\\DeepL\\": [ "src/", "tests/" ]
         }
     }
 }
