@@ -1,4 +1,4 @@
-# DeepL PHP Library
+# deepl-php-lib [![Build Status](https://img.shields.io/travis/arkadiusjonczek/seo-lib.svg)](https://travis-ci.org/Baby-Markt/deepl-php-lib)
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
