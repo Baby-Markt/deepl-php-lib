@@ -35,6 +35,19 @@ class DeepL
     const API_URL_DESTINATION_LANG = 'target_lang=%s';
 
     /**
+     * DeepL HTTP error codes
+     *
+     * @var array
+     */
+    protected $errorCodes = array(
+        400 => 'Wrong request, please check error message and your parameters.',
+        403 => 'Authorization failed. Please supply a valid auth_key parameter.',
+        413 => 'Request Entity Too Large. The request size exceeds the current limit.',
+        429 => 'Too many requests. Please wait and send your request once again.',
+        456 => 'Quota exceeded. The character limit has been reached.'
+    );
+
+    /**
      * Supported translation source languages
      *
      * @var array
@@ -81,7 +94,7 @@ class DeepL
     /**
      * DeepL constructor
      *
-     * @param $authKey
+     * @param $authKey string
      */
     public function __construct($authKey)
     {
@@ -92,7 +105,7 @@ class DeepL
     }
 
     /**
-     * DeepL Destructor
+     * DeepL destructor
      */
     public function __destruct()
     {
@@ -125,8 +138,8 @@ class DeepL
     /**
      * Check if the given languages are supported
      *
-     * @param $sourceLanguage
-     * @param $destinationLanguage
+     * @param $sourceLanguage      string
+     * @param $destinationLanguage string
      *
      * @return boolean
      *
@@ -152,9 +165,9 @@ class DeepL
     /**
      * Build the URL for the DeepL API request
      *
-     * @param $text
-     * @param $sourceLanguage
-     * @param $destinationLanguage
+     * @param $text                string
+     * @param $sourceLanguage      string
+     * @param $destinationLanguage string
      *
      * @return string
      */
@@ -179,7 +192,7 @@ class DeepL
     /**
      * Make a request to the given URL
      *
-     * @param $url
+     * @param $url string
      *
      * @return array
      *
@@ -190,17 +203,15 @@ class DeepL
         curl_setopt($this->curl, CURLOPT_URL, $url);
         $response = curl_exec($this->curl);
 
-        // if there was a curl error
-        if ($response == false) {
+        if (!curl_errno($this->curl)) {
+            $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 
-            $errorString = curl_error($this->curl);
-            $errorNumber = curl_errno($this->curl);
-
-            if (!$errorString) {
-                $errorString = 'There was a cURL Response Error - please check your DeepL Auth Key.';
+            if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
+                throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
             }
-
-            throw new DeepLException($errorString, $errorNumber);
+        }
+        else {
+            throw new DeepLException('There was a cURL Request Error.');
         }
 
         $translationsArray = json_decode($response, true);
