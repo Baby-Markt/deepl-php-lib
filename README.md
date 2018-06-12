@@ -67,3 +67,9 @@ Now, run PHPUnit Tests.
 ```bash
 vendor/bin/phpunit
 ```
+
+Or use composer.
+
+```bash
+composer test
+```

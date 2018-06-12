@@ -25,5 +25,10 @@
         "psr-4": {
             "BabyMarkt\\DeepL\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": [
+          "vendor/bin/phpunit"
+        ]
     }
 }
