@@ -2,6 +2,11 @@
 
 namespace BabyMarkt\DeepL;
 
+/**
+ * Class DeepLTest
+ *
+ * @package BabyMarkt\DeepL
+ */
 class DeepLTest extends \PHPUnit_Framework_TestCase
 {
     /**

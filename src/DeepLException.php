@@ -2,7 +2,12 @@
 
 namespace BabyMarkt\DeepL;
 
+/**
+ * Class DeepLException
+ *
+ * @package BabyMarkt\DeepL
+ */
 class DeepLException extends \Exception
 {
-    // foo
+    // to be continued ..
 }
