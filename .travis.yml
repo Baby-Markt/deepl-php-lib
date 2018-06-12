@@ -2,11 +2,6 @@ language: php
 
 sudo: false
 
-matrix:
-  include:
-    - php: 5.3
-      dist: precise
-
 php:
   - 5.3
   - 5.4
@@ -16,6 +11,11 @@ php:
   - 7.2
   - nightly
 
+matrix:
+  include:
+    - php: 5.3
+      dist: precise
+
 cache:
   directories:
     - $HOME/.composer/cache
@@ -23,4 +23,5 @@ cache:
 before_script:
   - composer install
 
-script: composer test
+script:
+  - composer test
