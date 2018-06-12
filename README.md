@@ -22,8 +22,8 @@ $deepl   = new DeepL($authKey);
 Translate one Text:
 
 ```php
-$result = $deepl->translate('Hallo Welt', 'de', 'en');
-echo $result['translations'][0]['text];
+$translatedText = $deepl->translate('Hallo Welt', 'de', 'en');
+echo $translatedText;
 ```
 
 Translate multiple Texts:
@@ -35,9 +35,9 @@ $text = array(
     'Macht doch einfach mal'
 );
 
-$result = $deepl->translate($text, 'de', 'en');
+$translations = $deepl->translate($text, 'de', 'en');
 
-foreach ($result['translations'] as $translation) {
+foreach ($translations as $translation) {
     echo $translation['text];
 }
 ```
