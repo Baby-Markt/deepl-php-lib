@@ -121,7 +121,7 @@ class DeepL
      * @param $sourceLanguage      string
      * @param $destinationLanguage string
      *
-     * @return array
+     * @return string|string[]
      *
      * @throws DeepLException
      */
@@ -130,9 +130,22 @@ class DeepL
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
+        // build the DeepL API request url
         $url = $this->buildUrl($text, $sourceLanguage, $destinationLanguage);
 
-        return $this->request($url);
+        // request the DeepL API
+        $translationsArray = $this->request($url);
+        $translationsCount = count($translationsArray['translations']);
+
+        if ($translationsCount == 0) {
+            throw new DeepLException('No translations found.');
+        }
+        else if ($translationsCount == 1) {
+            return $translationsArray['translations'][0]['text'];
+        }
+        else {
+            return $translationsArray['translations'];
+        }
     }
 
     /**
@@ -215,6 +228,10 @@ class DeepL
         }
 
         $translationsArray = json_decode($response, true);
+
+        if (!$translationsArray) {
+            throw new DeepLException('The Response seems to not be valid JSON.');
+        }
 
         return $translationsArray;
     }

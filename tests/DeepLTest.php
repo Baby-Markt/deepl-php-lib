@@ -102,9 +102,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $deepl     = new DeepL($authKey);
 
-        $response = $deepl->translate($germanText);
+        $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals('Hello World', $response['translations'][0]['text']);
+        $this->assertEquals('Hello World', $translatedText);
     }
 
     /**
@@ -121,6 +121,6 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
-        $response = $deepl->translate($germanText);
+        $translatedText = $deepl->translate($germanText);
     }
 }
