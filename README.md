@@ -1,6 +1,6 @@
 # DeepL PHP Library
 
-Simple PHP Library for DeepL API.
+Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
 ## Installation
 
@@ -12,16 +12,37 @@ composer require babymarkt/deepl-php-lib
 
 ## Usage
 
+Create an instance with your auth key:
+
 ```php
-$authKey = 'AUTH KEY';
+$authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey);
-
-$result = $deepl->translate('Hallo Welt', 'de', 'en');
-
-print_r($result);
 ```
 
-## Tests
+Translate one Text:
+
+```php
+$result = $deepl->translate('Hallo Welt', 'de', 'en');
+echo $result['translations'][0]['text];
+```
+
+Translate multiple Texts:
+
+```php
+$text = array(
+    'Hallo Welt',
+    'Wie geht es dir',
+    'Macht doch einfach mal'
+);
+
+$result = $deepl->translate($text, 'de', 'en');
+
+foreach ($result['translations'] as $translation) {
+    echo $translation['text];
+}
+```
+
+## Run PHPUnit Tests
 
 Clone the repository.
 
