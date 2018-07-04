@@ -76,24 +76,51 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildUrl()
     {
-        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&text=Hallo%20Welt&source_lang=de&target_lang=en';
+        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&source_lang=de&target_lang=en';
 
         $authKey = '123456';
         $deepl   = new DeepL($authKey);
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
 
-        $return = $buildUrl->invokeArgs($deepl, array('Hallo Welt', 'de', 'en'));
+        $return = $buildUrl->invokeArgs($deepl, array('de', 'en'));
 
         $this->assertEquals($expectedString, $return);
     }
 
     /**
-     * Test translate()
+     * Test buildBody()
+     */
+    public function testBuildBody()
+    {
+        $expectedString = 'text=Hallo%20Welt';
+
+        $authKey = '123456';
+        $deepl   = new DeepL($authKey);
+
+        $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBody');
+
+        $return = $buildUrl->invokeArgs($deepl, array('Hallo Welt'));
+
+        $this->assertEquals($expectedString, $return);
+    }
+
+    /**
+     * Test translate() calls
+     */
+    public function testTranslate()
+    {
+        $mock = $this->getMockBuilder('\BabyMarkt\DeepL\DeepL');
+
+        // TODO: test if translate methods calls correct methods
+    }
+
+    /**
+     * Test translate() success
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
-    public function testTranslate()
+    public function testTranslateSuccess()
     {
         return;
 

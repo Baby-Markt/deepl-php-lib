@@ -131,10 +131,11 @@ class DeepL
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         // build the DeepL API request url
-        $url = $this->buildUrl($text, $sourceLanguage, $destinationLanguage);
+        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage);
+        $body = $this->buildBody($text);
 
         // request the DeepL API
-        $translationsArray = $this->request($url);
+        $translationsArray = $this->request($url, $body);
         $translationsCount = count($translationsArray['translations']);
 
         if ($translationsCount == 0) {
@@ -184,22 +185,42 @@ class DeepL
      *
      * @return string
      */
-    protected function buildUrl($text, $sourceLanguage, $destinationLanguage)
+    protected function buildUrl($sourceLanguage, $destinationLanguage)
     {
-        if (!is_array($text)) {
-            $text = (array)$text;
-        }
-
         $url = DeepL::API_URL . '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
-
-        foreach ($text as $textElement) {
-            $url .= '&' . sprintf(DeepL::API_URL_TEXT, rawurlencode($textElement));
-        }
 
         $url .= '&' . sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
         $url .= '&' . sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
 
         return $url;
+    }
+
+    /**
+     * Build the body for the DeepL API request
+     *
+     * @param $text
+     *
+     * @return string
+     */
+    protected function buildBody($text)
+    {
+        $body  = '';
+        $first = true;
+
+        if (!is_array($text)) {
+            $text = (array)$text;
+        }
+
+        foreach ($text as $textElement) {
+
+            $body .= ($first ? '' : '&') . sprintf(DeepL::API_URL_TEXT, rawurlencode($textElement));
+
+            if ($first) {
+                $first = false;
+            }
+        }
+
+        return $body;
     }
 
     /**
@@ -211,9 +232,12 @@ class DeepL
      *
      * @throws DeepLException
      */
-    protected function request($url)
+    protected function request($url, $body)
     {
         curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
         $response = curl_exec($this->curl);
 
         if (!curl_errno($this->curl)) {
