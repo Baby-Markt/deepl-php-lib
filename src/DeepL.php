@@ -131,7 +131,7 @@ class DeepL
      *
      * @throws DeepLException
      */
-    public function translate($text, $sourceLanguage = 'de', $destinationLanguage = 'en', array $tagHandling = [])
+    public function translate($text, $sourceLanguage = 'de', $destinationLanguage = 'en', array $tagHandling = array())
     {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
