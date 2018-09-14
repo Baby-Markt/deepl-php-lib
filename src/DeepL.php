@@ -191,7 +191,7 @@ class DeepL
      *
      * @return string
      */
-    protected function buildUrl($sourceLanguage, $destinationLanguage, $tagHandling)
+    protected function buildUrl($sourceLanguage, $destinationLanguage, $tagHandling = array())
     {
         $url = DeepL::API_URL . '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
 
