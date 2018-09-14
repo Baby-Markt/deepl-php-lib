@@ -148,7 +148,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $deepl     = new DeepL($authKey);
 
-        $translatedText = $deepl->translate($germanText, 'en', 'de', ['xml']);
+        $translatedText = $deepl->translate($germanText, 'en', 'de', array('xml'));
 
         $this->assertEquals('<strong>Text zu übersetzen</strong>', $translatedText);
     }
