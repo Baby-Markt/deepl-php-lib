@@ -107,7 +107,7 @@ class DeepL
      *
      * @var array
      */
-    protected $ignoreTags = [];
+    protected $ignoreTags = array();
 
     /**
      * DeepL constructor
