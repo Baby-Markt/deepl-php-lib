@@ -40,6 +40,12 @@ class DeepL
     const API_URL_TAG_HANDLING = 'tag_handling=%s';
 
     /**
+     * API v1 URL: Parameter ignore_tags
+     */
+    const API_URL_IGNORE_TAGS = 'ignore_tags=%s';
+
+
+    /**
      * DeepL HTTP error codes
      *
      * @var array
@@ -95,6 +101,13 @@ class DeepL
      * @var resource
      */
     protected $curl;
+
+    /**
+     * DeepL ingored tags
+     *
+     * @var array
+     */
+    protected $ignoreTags = [];
 
     /**
      * DeepL constructor
@@ -200,6 +213,11 @@ class DeepL
         if (!empty($tagHandling)) {
             $url .= '&' . sprintf(DeepL::API_URL_TAG_HANDLING, implode(',', $tagHandling));
         }
+        if (!empty($this->ignoreTags)) {
+            $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $this->ignoreTags));
+        }
+
+
 
         return $url;
     }
@@ -267,5 +285,10 @@ class DeepL
         }
 
         return $translationsArray;
+    }
+
+    public function setIgnoreTags($ignoreTags)
+    {
+        $this->ignoreTags = $ignoreTags;
     }
 }
