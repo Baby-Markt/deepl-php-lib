@@ -287,7 +287,7 @@ class DeepL
         return $translationsArray;
     }
 
-    public function setIgnoreTags($ignoreTags)
+    public function setIgnoreTags(array $ignoreTags)
     {
         $this->ignoreTags = $ignoreTags;
     }
