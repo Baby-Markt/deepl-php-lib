@@ -135,6 +135,45 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test translate() with tag handling success
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testTranslateTagHandlingSuccess()
+    {
+        return;
+
+        $authKey    = 'INSERT YOUR AUTH KEY HERE';
+        $englishText = '<strong>text to translate</strong>';
+
+        $deepl     = new DeepL($authKey);
+
+        $translatedText = $deepl->translate($germanText, 'en', 'de', array('xml'));
+
+        $this->assertEquals('<strong>Text zu übersetzen</strong>', $translatedText);
+    }
+
+    /**
+     * Test translate() with tag ignored success
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testTranslateIgnoreTagsSuccess()
+    {
+        return;
+
+        $authKey    = 'INSERT YOUR AUTH KEY HERE';
+        $englishText = '<strong>text to do not translate</strong><p>text to translate</p>';
+
+        $deepl     = new DeepL($authKey);
+
+        $deepl->setIgnoreTags(array('strong'));
+        $translatedText = $deepl->translate($germanText, 'en', 'de', array('xml'));
+
+        $this->assertEquals('<strong>text to do not translate</strong><p>Text zu übersetzen</p>', $translatedText);
+    }
+
+    /**
      * Test translate()
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!

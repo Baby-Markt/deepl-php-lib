@@ -35,6 +35,17 @@ class DeepL
     const API_URL_DESTINATION_LANG = 'target_lang=%s';
 
     /**
+     * API v1 URL: Parameter tag_handling
+     */
+    const API_URL_TAG_HANDLING = 'tag_handling=%s';
+
+    /**
+     * API v1 URL: Parameter ignore_tags
+     */
+    const API_URL_IGNORE_TAGS = 'ignore_tags=%s';
+
+
+    /**
      * DeepL HTTP error codes
      *
      * @var array
@@ -92,6 +103,13 @@ class DeepL
     protected $curl;
 
     /**
+     * DeepL ingored tags
+     *
+     * @var array
+     */
+    protected $ignoreTags = array();
+
+    /**
      * DeepL constructor
      *
      * @param $authKey string
@@ -120,18 +138,19 @@ class DeepL
      * @param $text                string|string[]
      * @param $sourceLanguage      string
      * @param $destinationLanguage string
+     * @param $tagHandling         array
      *
      * @return string|string[]
      *
      * @throws DeepLException
      */
-    public function translate($text, $sourceLanguage = 'de', $destinationLanguage = 'en')
+    public function translate($text, $sourceLanguage = 'de', $destinationLanguage = 'en', array $tagHandling = array())
     {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         // build the DeepL API request url
-        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage);
+        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage, $tagHandling);
         $body = $this->buildBody($text);
 
         // request the DeepL API
@@ -185,12 +204,20 @@ class DeepL
      *
      * @return string
      */
-    protected function buildUrl($sourceLanguage, $destinationLanguage)
+    protected function buildUrl($sourceLanguage, $destinationLanguage, $tagHandling = array())
     {
         $url = DeepL::API_URL . '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
 
         $url .= '&' . sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
         $url .= '&' . sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
+        if (!empty($tagHandling)) {
+            $url .= '&' . sprintf(DeepL::API_URL_TAG_HANDLING, implode(',', $tagHandling));
+        }
+        if (!empty($this->ignoreTags)) {
+            $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $this->ignoreTags));
+        }
+
+
 
         return $url;
     }
@@ -258,5 +285,10 @@ class DeepL
         }
 
         return $translationsArray;
+    }
+
+    public function setIgnoreTags(array $ignoreTags)
+    {
+        $this->ignoreTags = $ignoreTags;
     }
 }
