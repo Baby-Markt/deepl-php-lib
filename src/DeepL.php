@@ -68,9 +68,11 @@ class DeepL
         'DE',
         'FR',
         'ES',
+        'PT',
         'IT',
         'NL',
-        'PL'
+        'PL',
+        'RU'
     );
 
     /**
@@ -83,9 +85,11 @@ class DeepL
         'DE',
         'FR',
         'ES',
+        'PT',
         'IT',
         'NL',
-        'PL'
+        'PL',
+        'RU'
     );
 
     /**
