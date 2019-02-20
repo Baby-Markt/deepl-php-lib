@@ -10,10 +10,19 @@ namespace BabyMarkt\DeepL;
 class DeepLTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * DeepL Auth Key (Set if you want to test all methods)
+     *
+     * @var string
+     */
+    private $authKey = '';
+
+    /**
      * Get protected method
      *
      * @param $className
      * @param $methodName
+     *
+     * @throws \ReflectionException
      *
      * @return \ReflectionMethod
      */
@@ -110,6 +119,8 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslate()
     {
+        return;
+
         $mock = $this->getMockBuilder('\BabyMarkt\DeepL\DeepL');
 
         // TODO: test if translate methods calls correct methods
@@ -122,16 +133,39 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateSuccess()
     {
-        return;
+        if (!$this->authKey) {
+            return;
+        }
 
-        $authKey    = 'INSERT YOUR AUTH KEY HERE';
-        $germanText = 'Hallo Welt';
+        $deepl = new DeepL($this->authKey);
 
-        $deepl     = new DeepL($authKey);
+        $germanText     = 'Hallo Welt';
+        $expectedText   = 'Hello World';
 
         $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals('Hello World', $translatedText);
+        $this->assertEquals($expectedText, $translatedText);
+    }
+
+    /**
+     * Test translate() success with v2 API
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testTranslateV2Success()
+    {
+        if (!$this->authKey) {
+            return;
+        }
+
+        $deepl = new DeepL($this->authKey, 2);
+
+        $germanText     = 'Hallo Welt';
+        $expectedText   = 'Hello World';
+
+        $translatedText = $deepl->translate($germanText);
+
+        $this->assertEquals($expectedText, $translatedText);
     }
 
     /**
@@ -141,16 +175,23 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateTagHandlingSuccess()
     {
-        return;
+        if (!$this->authKey) {
+            return;
+        }
 
-        $authKey    = 'INSERT YOUR AUTH KEY HERE';
-        $englishText = '<strong>text to translate</strong>';
+        $deepl = new DeepL($this->authKey);
 
-        $deepl     = new DeepL($authKey);
+        $englishText  = '<strong>text to translate</strong>';
+        $expectedText = '<strong>zu übersetzender Text</strong>';
 
-        $translatedText = $deepl->translate($germanText, 'en', 'de', array('xml'));
+        $translatedText = $deepl->translate(
+            $englishText,
+            'en',
+            'de',
+            array('xml')
+        );
 
-        $this->assertEquals('<strong>Text zu übersetzen</strong>', $translatedText);
+        $this->assertEquals($expectedText, $translatedText);
     }
 
     /**
@@ -160,23 +201,28 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateIgnoreTagsSuccess()
     {
-        return;
+        if (!$this->authKey) {
+            return;
+        }
 
-        $authKey    = 'INSERT YOUR AUTH KEY HERE';
-        $englishText = '<strong>text to do not translate</strong><p>text to translate</p>';
+        $deepl = new DeepL($this->authKey);
 
-        $deepl     = new DeepL($authKey);
+        $englishText  = '<strong>text to do not translate</strong><p>text to translate</p>';
+        $expectedText = '<strong>Text, der nicht übersetzt werden soll</strong><p>zu übersetzender Text</p>';
 
-        $deepl->setIgnoreTags(array('strong'));
-        $translatedText = $deepl->translate($germanText, 'en', 'de', array('xml'));
+        $translatedText = $deepl->translate(
+            $englishText,
+            'en',
+            'de',
+            array('xml'),
+            array('strong')
+        );
 
-        $this->assertEquals('<strong>text to do not translate</strong><p>Text zu übersetzen</p>', $translatedText);
+        $this->assertEquals($expectedText, $translatedText);
     }
 
     /**
      * Test translate()
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
     public function testTranslateException()
     {
