@@ -204,7 +204,7 @@ class DeepL
         $destinationLanguage = strtoupper($destinationLanguage);
 
         if (!in_array($destinationLanguage, $this->destinationLanguages)) {
-            throw new DeepLException(sprintf('The language "%s" is not supported as destination language.', $sourceLanguage));
+            throw new DeepLException(sprintf('The language "%s" is not supported as destination language.', $destinationLanguage));
         }
 
         return true;
