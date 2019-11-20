@@ -42,7 +42,7 @@ $text = array(
 $translations = $deepl->translate($text, 'de', 'en');
 
 foreach ($translations as $translation) {
-    echo $translation['text];
+    echo $translation['text'];
 }
 ```
 
