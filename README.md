@@ -1,4 +1,8 @@
-# deepl-php-lib [![Build Status](https://travis-ci.org/Baby-Markt/deepl-php-lib.svg?branch=master)](https://travis-ci.org/Baby-Markt/deepl-php-lib)
+# deepl-php-lib
+
+[![Build Status](https://travis-ci.org/Baby-Markt/deepl-php-lib.svg?branch=master)](https://travis-ci.org/Baby-Markt/deepl-php-lib)
+[![Latest Stable Version](https://poser.pugx.org/babymarkt/deepl-php-lib/v/stable.svg)](https://packagist.org/packages/babymarkt/deepl-php-lib)
+[![Total Downloads](https://poser.pugx.org/babymarkt/deepl-php-lib/downloads.png)](https://packagist.org/packages/babymarkt/deepl-php-lib)
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
