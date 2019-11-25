@@ -227,7 +227,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $deepl = new DeepL(self::$authKey);
 
         $englishText  = '<strong>text to do not translate</strong><p>text to translate</p>';
-        $expectedText = '<strong>Text, der nicht übersetzt werden soll</strong><p>zu übersetzender Text</p>';
+        $expectedText = '<strong>text to do not translate</strong><p>zu übersetzender Text</p>';
 
         $translatedText = $deepl->translate(
             $englishText,
