@@ -10,11 +10,25 @@ namespace BabyMarkt\DeepL;
 class DeepLTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * DeepL Auth Key (Set if you want to test all methods)
+     * DeepL Auth Key.
      *
-     * @var string
+     * @var bool|string
      */
-    private $authKey = '';
+    protected static $authKey = false;
+
+    /**
+     * Setup DeepL Auth Key.
+     */
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+
+        if (($authKey = getenv('DEEPL_AUTH_KEY')) === false) {
+            return;
+        }
+
+        self::$authKey = $authKey;
+    }
 
     /**
      * Get protected method
@@ -98,6 +112,23 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test buildUrl()
+     */
+    public function testBuildUrlWithTags()
+    {
+        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&source_lang=de&target_lang=en&tag_handling=xml&ignore_tags=x';
+
+        $authKey = '123456';
+        $deepl   = new DeepL($authKey);
+
+        $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
+
+        $return = $buildUrl->invokeArgs($deepl, array('de', 'en', array('xml'), array('x')));
+
+        $this->assertEquals($expectedString, $return);
+    }
+
+    /**
      * Test buildBody()
      */
     public function testBuildBody()
@@ -115,29 +146,17 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() calls
-     */
-    public function testTranslate()
-    {
-        return;
-
-        $mock = $this->getMockBuilder('\BabyMarkt\DeepL\DeepL');
-
-        // TODO: test if translate methods calls correct methods
-    }
-
-    /**
      * Test translate() success
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
     public function testTranslateSuccess()
     {
-        if (!$this->authKey) {
-            return;
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL($this->authKey);
+        $deepl = new DeepL(self::$authKey);
 
         $germanText     = 'Hallo Welt';
         $expectedText   = 'Hello World';
@@ -154,11 +173,11 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateV2Success()
     {
-        if (!$this->authKey) {
-            return;
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL($this->authKey, 2);
+        $deepl = new DeepL(self::$authKey, 2);
 
         $germanText     = 'Hallo Welt';
         $expectedText   = 'Hello World';
@@ -175,11 +194,11 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateTagHandlingSuccess()
     {
-        if (!$this->authKey) {
-            return;
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL($this->authKey);
+        $deepl = new DeepL(self::$authKey);
 
         $englishText  = '<strong>text to translate</strong>';
         $expectedText = '<strong>zu übersetzender Text</strong>';
@@ -201,14 +220,14 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateIgnoreTagsSuccess()
     {
-        if (!$this->authKey) {
-            return;
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL($this->authKey);
+        $deepl = new DeepL(self::$authKey);
 
         $englishText  = '<strong>text to do not translate</strong><p>text to translate</p>';
-        $expectedText = '<strong>Text, der nicht übersetzt werden soll</strong><p>zu übersetzender Text</p>';
+        $expectedText = '<strong>text to do not translate</strong><p>zu übersetzender Text</p>';
 
         $translatedText = $deepl->translate(
             $englishText,
