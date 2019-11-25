@@ -247,7 +247,7 @@ class DeepL
             $url .= '&' . sprintf(DeepL::API_URL_TAG_HANDLING, implode(',', $tagHandling));
         }
 
-        if (!empty($this->ignoreTags)) {
+        if (!empty($ignoreTags)) {
             $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
         }
 
