@@ -18,6 +18,9 @@ matrix:
     - php: 7.4snapshot
     - php: nightly
 
+  allow_failures:
+    - php: nightly
+
 cache:
   directories:
     - $HOME/.composer/cache
