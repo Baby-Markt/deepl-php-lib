@@ -10,10 +10,10 @@
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.3 <8.0"
     },
     "require-dev": {
-        "php": ">=5.3",
+        "php": ">=5.3 <8.0",
         "phpunit/phpunit": "^4.8"
     },
     "autoload": {
