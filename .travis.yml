@@ -18,6 +18,9 @@ matrix:
   allow_failures:
     - php: nightly
 
+env:
+  - COMPOSER_ALLOW_XDEBUG=0
+
 cache:
   directories:
     - $HOME/.composer/cache
@@ -28,5 +31,5 @@ before_script:
   - composer install
 
 script:
-  - composer cs
-  - composer test
+  - vendor/bin/phpcs src tests
+  - vendor/bin/phpunit
