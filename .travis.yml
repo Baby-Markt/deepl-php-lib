@@ -26,4 +26,5 @@ before_script:
   - composer install
 
 script:
+  - composer cs
   - composer test
