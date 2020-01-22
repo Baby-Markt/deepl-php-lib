@@ -28,7 +28,9 @@ cache:
 before_script:
   - phpenv config-rm xdebug.ini
   - composer validate
-  - composer install
+
+install:
+  - composer install --prefer-dist
 
 script:
   - vendor/bin/phpcs src tests
