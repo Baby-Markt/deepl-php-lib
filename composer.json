@@ -21,6 +21,7 @@
     },
     "require-dev": {
         "php": ">=5.3 <8.0",
+        "phpmd/phpmd": "2.4.*",
         "phpunit/phpunit": "^4.8",
         "squizlabs/php_codesniffer": "^2.9"
     },
@@ -36,7 +37,13 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "cs": "vendor/bin/phpcs src tests"
+        "cs": "vendor/bin/phpcs",
+        "md": "vendor/bin/phpmd src,tests text phpmd.xml.dist",
+        "test:full": [
+            "composer test",
+            "composer cs",
+            "composer md"
+        ]
     },
     "config": {
       "sort-packages": true

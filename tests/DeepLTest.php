@@ -2,10 +2,13 @@
 
 namespace BabyMarkt\DeepL;
 
+use ReflectionClass;
+
 /**
  * Class DeepLTest
  *
  * @package BabyMarkt\DeepL
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class DeepLTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +26,9 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUpBeforeClass();
 
-        if (($authKey = getenv('DEEPL_AUTH_KEY')) === false) {
+        $authKey = getenv('DEEPL_AUTH_KEY');
+
+        if ($authKey === false) {
             return;
         }
 
@@ -42,7 +47,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getMethod($className, $methodName)
     {
-        $class = new \ReflectionClass($className);
+        $class = new ReflectionClass($className);
         $method = $class->getMethod($methodName);
         $method->setAccessible(true);
 
@@ -253,6 +258,6 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
-        $translatedText = $deepl->translate($germanText);
+        $deepl->translate($germanText);
     }
 }

@@ -175,9 +175,9 @@ class DeepL
             throw new DeepLException('No translations found.');
         } elseif ($translationsCount == 1) {
             return $translationsArray['translations'][0]['text'];
-        } else {
-            return $translationsArray['translations'];
         }
+
+        return $translationsArray['translations'];
     }
 
     /**
@@ -298,14 +298,14 @@ class DeepL
 
         $response = curl_exec($this->curl);
 
-        if (!curl_errno($this->curl)) {
-            $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-
-            if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
-                throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
-            }
-        } else {
+        if (curl_errno($this->curl)) {
             throw new DeepLException('There was a cURL Request Error.');
+        }
+
+        $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+
+        if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
+            throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
         }
 
         $translationsArray = json_decode($response, true);
