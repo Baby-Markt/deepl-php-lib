@@ -1,12 +1,15 @@
 # deepl-php-lib
 
-[![Build Status](https://travis-ci.org/Baby-Markt/deepl-php-lib.svg?branch=master)](https://travis-ci.org/Baby-Markt/deepl-php-lib)
-[![Latest Stable Version](https://poser.pugx.org/babymarkt/deepl-php-lib/v/stable.svg)](https://packagist.org/packages/babymarkt/deepl-php-lib)
-[![Total Downloads](https://poser.pugx.org/babymarkt/deepl-php-lib/downloads.png)](https://packagist.org/packages/babymarkt/deepl-php-lib)
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![Quality Score][ico-code-quality]][link-code-quality]
+[![Total Downloads][ico-downloads]][link-downloads]
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
-## Installation
+## Install
 
 Use composer if you want to use this library in your project.
 
@@ -46,34 +49,40 @@ foreach ($translations as $translation) {
 }
 ```
 
-## Run PHPUnit Tests
+## Testing
 
-Clone the repository.
-
-```bash
-git clone git@github.com:Baby-Markt/deepl-php-lib.git
-```
-
-Create phpunit.xml from dist file.
-
-```bash
-cp phpunit.xml.dist phpunit.xml
-```
-
-Install composer dependencies.
-
-```bash
-composer install
-```
-
-Now, run PHPUnit Tests.
-
-```bash
-vendor/bin/phpunit
-```
-
-Or use composer.
+Run PHPUnit Tests.
 
 ```bash
 composer test
 ```
+
+Run Check-Style.
+
+```bash
+composer cs
+```
+
+## Credits
+
+- [arkadiusjonczek][link-author]
+- [All Contributors][link-contributors]
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/babymarkt/deepl-php-lib.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/Baby-Markt/deepl-php-lib/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/babymarkt/deepl-php-lib.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/babymarkt/deepl-php-lib.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/babymarkt/deepl-php-lib.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/babymarkt/deepl-php-lib
+[link-travis]: https://travis-ci.org/Baby-Markt/deepl-php-lib
+[link-scrutinizer]: https://scrutinizer-ci.com/g/babymarkt/deepl-php-lib/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/babymarkt/deepl-php-lib
+[link-downloads]: https://packagist.org/packages/babymarkt/deepl-php-lib
+[link-author]: https://github.com/arkadiusjonczek
+[link-contributors]: ../../contributors
