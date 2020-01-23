@@ -33,5 +33,4 @@ install:
   - composer install
 
 script:
-  - vendor/bin/phpcs src tests
-  - vendor/bin/phpunit
+  - composer test:all
