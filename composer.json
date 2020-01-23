@@ -39,7 +39,7 @@
         "test": "vendor/bin/phpunit",
         "cs": "vendor/bin/phpcs",
         "md": "vendor/bin/phpmd src,tests text phpmd.xml.dist",
-        "test:full": [
+        "test:all": [
             "composer test",
             "composer cs",
             "composer md"
