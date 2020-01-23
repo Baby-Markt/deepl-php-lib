@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ruleset name="babymarkt/deepl-php-lib">
+    <description>The coding standard of deepl-php-lib package</description>
+
+    <file>src</file>
+    <file>tests</file>
+
+    <arg value="p" />
+    <arg name="colors" />
+    <arg value="s" />
+
+    <!-- Use the PSR2 Standard-->
+    <rule ref="PSR2" />
+</ruleset>

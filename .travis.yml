@@ -18,12 +18,19 @@ matrix:
   allow_failures:
     - php: nightly
 
+env:
+  - COMPOSER_ALLOW_XDEBUG=0
+
 cache:
   directories:
     - $HOME/.composer/cache
 
-before_script:
+before_install:
+  - phpenv config-rm xdebug.ini
+  - composer validate
+
+install:
   - composer install
 
 script:
-  - composer test
+  - composer test:all

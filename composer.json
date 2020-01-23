@@ -1,7 +1,14 @@
 {
     "name": "babymarkt/deepl-php-lib",
-    "description": "DeepL API Client Library supporting PHP >= 5.3 && PHP < 8.0",
     "type": "library",
+    "description": "DeepL API Client Library supporting PHP >= 5.3 && PHP < 8.0",
+    "keywords": [
+      "babymarkt",
+      "deepl",
+      "i18n",
+      "translation"
+    ],
+    "homepage": "https://github.com/Baby-Markt/deepl-php-lib",
     "license": "MIT",
     "authors": [
         {
@@ -14,7 +21,9 @@
     },
     "require-dev": {
         "php": ">=5.3 <8.0",
-        "phpunit/phpunit": "^4.8"
+        "phpmd/phpmd": "2.4.*",
+        "phpunit/phpunit": "^4.8",
+        "squizlabs/php_codesniffer": "^2.9"
     },
     "autoload": {
         "psr-4": {
@@ -27,8 +36,16 @@
         }
     },
     "scripts": {
-        "test": [
-          "vendor/bin/phpunit"
+        "cs": "vendor/bin/phpcs",
+        "md": "vendor/bin/phpmd src,tests text phpmd.xml.dist",
+        "test": "vendor/bin/phpunit",
+        "test:all": [
+            "composer cs",
+            "composer md",
+            "composer test"
         ]
+    },
+    "config": {
+      "sort-packages": true
     }
 }

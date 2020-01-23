@@ -159,8 +159,7 @@ class DeepL
         $destinationLanguage = 'en',
         array $tagHandling = array(),
         array $ignoreTags = array()
-    )
-    {
+    ) {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
@@ -174,13 +173,11 @@ class DeepL
 
         if ($translationsCount == 0) {
             throw new DeepLException('No translations found.');
-        }
-        else if ($translationsCount == 1) {
+        } elseif ($translationsCount == 1) {
             return $translationsArray['translations'][0]['text'];
         }
-        else {
-            return $translationsArray['translations'];
-        }
+
+        return $translationsArray['translations'];
     }
 
     /**
@@ -198,13 +195,17 @@ class DeepL
         $sourceLanguage = strtoupper($sourceLanguage);
 
         if (!in_array($sourceLanguage, $this->sourceLanguages)) {
-            throw new DeepLException(sprintf('The language "%s" is not supported as source language.', $sourceLanguage));
+            throw new DeepLException(
+                sprintf('The language "%s" is not supported as source language.', $sourceLanguage)
+            );
         }
 
         $destinationLanguage = strtoupper($destinationLanguage);
 
         if (!in_array($destinationLanguage, $this->destinationLanguages)) {
-            throw new DeepLException(sprintf('The language "%s" is not supported as destination language.', $destinationLanguage));
+            throw new DeepLException(
+                sprintf('The language "%s" is not supported as destination language.', $destinationLanguage)
+            );
         }
 
         return true;
@@ -225,8 +226,7 @@ class DeepL
         $destinationLanguage,
         array $tagHandling = array(),
         array $ignoreTags = array()
-    )
-    {
+    ) {
         // select correct api url
         switch ($this->apiVersion) {
             case 1:
@@ -271,7 +271,6 @@ class DeepL
         }
 
         foreach ($text as $textElement) {
-
             $body .= ($first ? '' : '&') . sprintf(DeepL::API_URL_TEXT, rawurlencode($textElement));
 
             if ($first) {
@@ -299,15 +298,14 @@ class DeepL
 
         $response = curl_exec($this->curl);
 
-        if (!curl_errno($this->curl)) {
-            $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-
-            if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
-                throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
-            }
-        }
-        else {
+        if (curl_errno($this->curl)) {
             throw new DeepLException('There was a cURL Request Error.');
+        }
+
+        $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+
+        if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
+            throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
         }
 
         $translationsArray = json_decode($response, true);
