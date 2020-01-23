@@ -51,21 +51,33 @@ foreach ($translations as $translation) {
 
 ## Testing
 
-Run PHPUnit Tests.
-
-```bash
-composer test
-```
-
-Run Check-Style.
+Run PHP_CodeSniffer Tests:
 
 ```bash
 composer cs
 ```
 
+Run PHPMD Tests:
+
+```bash
+composer md
+```
+
+Run PHPUnit Tests:
+
+```bash
+composer test
+```
+
+Run all tests:
+
+```bash
+composer test:all
+```
+
 ## Credits
 
-- [arkadiusjonczek][link-author]
+- [Arkadius Jonczek][link-author]
 - [All Contributors][link-contributors]
 
 ## License
