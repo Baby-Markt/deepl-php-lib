@@ -3,11 +3,16 @@ filter:
     - 'tests/*'
     - 'vendor/*'
 build:
+  environment:
+    php: 7.3.0
   nodes:
     analysis:
+      project_setup:
+        override: true
       tests:
         override:
-          - php-scrutinizer-run
+          - php-scrutinizer-run --enable-security-analysis
+          - phpcs-run
 checks:
   php:
     verify_property_names: true
