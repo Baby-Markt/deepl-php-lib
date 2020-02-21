@@ -11,7 +11,7 @@ build:
         override: true
       tests:
         override:
-          - php-scrutinizer-run --enable-security-analysis
+          - php-scrutinizer-run
           - phpcs-run
 checks:
   php:
