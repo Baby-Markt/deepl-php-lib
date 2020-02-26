@@ -5,8 +5,10 @@
     "keywords": [
       "babymarkt",
       "deepl",
+      "deeply",
       "i18n",
-      "translation"
+      "translation",
+      "translator"
     ],
     "homepage": "https://github.com/Baby-Markt/deepl-php-lib",
     "license": "MIT",
