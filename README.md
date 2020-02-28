@@ -9,6 +9,8 @@
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
+🇬🇧🇩🇪🇫🇷🇪🇸🇵🇹🇮🇹🇷🇺🇯🇵🇨🇳🇵🇱🇳🇱🇸🇪🇩🇰🇫🇮🇬🇷🇨🇿🇷🇴🇭🇺🇸🇰🇧🇬🇸🇮🇱🇹🇱🇻🇪🇪🇲🇹
+
 ## Install
 
 Use composer if you want to use this library in your project.
