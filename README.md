@@ -50,6 +50,18 @@ foreach ($translations as $translation) {
     echo $translation['text'];
 }
 ```
+### Supported languages
+* `de` - German
+* `en` - English
+* `fr` - French
+* `it` - Italian
+* `ja` - Japanese
+* `es` - Spanish
+* `nl` - Dutch
+* `pl` - Polish
+* `pt` - Portuguese
+* `ru` - Russian
+* `zh` - Chinese
 
 ## Testing
 
