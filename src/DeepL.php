@@ -260,7 +260,7 @@ class DeepL
             $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
         }
 
-        if(!empty($formality)) {
+        if (!empty($formality)) {
             $url .= '&' . sprintf(DeepL::API_URL_FORMALITY, $formality);
         }
 
