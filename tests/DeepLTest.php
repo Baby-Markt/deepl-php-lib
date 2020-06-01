@@ -104,7 +104,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildUrl()
     {
-        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&source_lang=de&target_lang=en';
+        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&source_lang=de&target_lang=en&formality=default';
 
         $authKey = '123456';
         $deepl   = new DeepL($authKey);
@@ -122,7 +122,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     public function testBuildUrlWithTags()
     {
         $expectedString  = 'https://api.deepl.com';
-        $expectedString .= '/v1/translate?auth_key=123456&source_lang=de&target_lang=en&tag_handling=xml&ignore_tags=x';
+        $expectedString .= '/v1/translate?auth_key=123456&source_lang=de&target_lang=en&tag_handling=xml&ignore_tags=x&formality=default';
 
         $authKey = '123456';
         $deepl   = new DeepL($authKey);
