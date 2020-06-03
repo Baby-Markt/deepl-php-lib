@@ -76,7 +76,9 @@ class DeepL
         'IT',
         'NL',
         'PL',
-        'RU'
+        'RU',
+        'JA',
+        'ZH'
     );
 
     /**
@@ -93,7 +95,9 @@ class DeepL
         'IT',
         'NL',
         'PL',
-        'RU'
+        'RU',
+        'JA',
+        'ZH'
     );
 
     /**
