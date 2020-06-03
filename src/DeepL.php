@@ -90,6 +90,8 @@ class DeepL
         'FR',
         'ES',
         'PT',
+        'PT-PT',
+        'PT-BR',
         'IT',
         'NL',
         'PL',
