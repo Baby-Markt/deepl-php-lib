@@ -104,9 +104,15 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildUrl()
     {
-        $expectedString = 'https://api.deepl.com/v1/translate?auth_key=123456&source_lang=de&target_lang=en&formality=default';
-
         $authKey = '123456';
+
+        $expectedString = 'https://api.deepl.com/v1/translate?' . http_build_query(array(
+            'auth_key' => $authKey,
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'formality' => 'default'
+        ));
+
         $deepl   = new DeepL($authKey);
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
@@ -121,10 +127,16 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildUrlWithTags()
     {
-        $expectedString  = 'https://api.deepl.com';
-        $expectedString .= '/v1/translate?auth_key=123456&source_lang=de&target_lang=en&tag_handling=xml&ignore_tags=x&formality=default';
-
         $authKey = '123456';
+        $expectedString = 'https://api.deepl.com/v1/translate?' . http_build_query(array(
+            'auth_key' => $authKey,
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'tag_handling' => 'xml',
+            'ignore_tags' => 'x',
+            'formality' => 'default'
+        ));
+
         $deepl   = new DeepL($authKey);
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
