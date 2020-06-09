@@ -50,6 +50,11 @@ class DeepL
     const API_URL_IGNORE_TAGS      = 'ignore_tags=%s';
 
     /**
+     * API URL: Parameter formality
+     */
+    const API_URL_FORMALITY        = 'formality=%s';
+
+    /**
      * DeepL HTTP error codes
      *
      * @var array
@@ -152,6 +157,7 @@ class DeepL
      * @param string          $destinationLanguage
      * @param array           $tagHandling
      * @param array           $ignoreTags
+     * @param string          $formality
      *
      * @return string|string[]
      *
@@ -162,13 +168,14 @@ class DeepL
         $sourceLanguage = 'de',
         $destinationLanguage = 'en',
         array $tagHandling = array(),
-        array $ignoreTags = array()
+        array $ignoreTags = array(),
+        $formality = "default"
     ) {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         // build the DeepL API request url
-        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage, $tagHandling, $ignoreTags);
+        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage, $tagHandling, $ignoreTags, $formality);
         $body = $this->buildBody($text);
 
         // request the DeepL API
@@ -222,6 +229,7 @@ class DeepL
      * @param string $destinationLanguage
      * @param array  $tagHandling
      * @param array  $ignoreTags
+     * @param string $formality
      *
      * @return string
      */
@@ -229,7 +237,8 @@ class DeepL
         $sourceLanguage,
         $destinationLanguage,
         array $tagHandling = array(),
-        array $ignoreTags = array()
+        array $ignoreTags = array(),
+        $formality = "default"
     ) {
         // select correct api url
         switch ($this->apiVersion) {
@@ -253,6 +262,10 @@ class DeepL
 
         if (!empty($ignoreTags)) {
             $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
+        }
+
+        if (!empty($formality)) {
+            $url .= '&' . sprintf(DeepL::API_URL_FORMALITY, $formality);
         }
 
         return $url;
