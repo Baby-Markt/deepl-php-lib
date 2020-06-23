@@ -60,6 +60,8 @@ foreach ($translations as $translation) {
 * `nl` - Dutch
 * `pl` - Polish
 * `pt` - Portuguese
+* `pt-pt` - Portuguese variant
+* `pt-br` - Portuguese variant
 * `ru` - Russian
 * `zh` - Chinese
 
