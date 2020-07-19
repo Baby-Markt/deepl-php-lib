@@ -132,7 +132,7 @@ class DeepL
      * @param string  $authKey
      * @param integer $apiVersion
      */
-    public function __construct($authKey, $apiVersion = 1)
+    public function __construct($authKey, $apiVersion = 2)
     {
         $this->authKey    = $authKey;
         $this->apiVersion = $apiVersion;
@@ -251,7 +251,7 @@ class DeepL
                 $url = DeepL::API_URL_V2;
                 break;
             default:
-                $url = DeepL::API_URL_V1;
+                $url = DeepL::API_URL_V2;
         }
 
         $url .= '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);

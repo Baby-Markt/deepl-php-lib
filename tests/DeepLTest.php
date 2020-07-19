@@ -106,7 +106,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     {
         $authKey = '123456';
 
-        $expectedString = 'https://api.deepl.com/v1/translate?' . http_build_query(array(
+        $expectedString = 'https://api.deepl.com/v2/translate?' . http_build_query(array(
             'auth_key' => $authKey,
             'source_lang' => 'de',
             'target_lang' => 'en',
@@ -128,7 +128,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     public function testBuildUrlWithTags()
     {
         $authKey = '123456';
-        $expectedString = 'https://api.deepl.com/v1/translate?' . http_build_query(array(
+        $expectedString = 'https://api.deepl.com/v2/translate?' . http_build_query(array(
             'auth_key' => $authKey,
             'source_lang' => 'de',
             'target_lang' => 'en',
@@ -164,7 +164,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() success
+     * Test translate() success with v2 API
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
@@ -185,17 +185,17 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() success with v2 API
+     * Test translate() success with v1 API
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
-    public function testTranslateV2Success()
+    public function testTranslateV1Success()
     {
         if (self::$authKey === false) {
             $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey, 2);
+        $deepl = new DeepL(self::$authKey, 1);
 
         $germanText     = 'Hallo Welt';
         $expectedText   = 'Hello World';
