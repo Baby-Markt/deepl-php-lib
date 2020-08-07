@@ -12,27 +12,27 @@ class DeepL
     /**
      * API v1 URL
      */
-    const API_URL_V1               = 'https://api.deepl.com/v1/translate';
+    const API_URL_V1 = 'https://api.deepl.com/v1/translate';
 
     /**
      * API v2 URL
      */
-    const API_URL_V2               = 'https://api.deepl.com/v2/translate';
+    const API_URL_V2 = 'https://api.deepl.com/v2/translate';
 
     /**
      * API URL: Parameter auth_key
      */
-    const API_URL_AUTH_KEY         = 'auth_key=%s';
+    const API_URL_AUTH_KEY = 'auth_key=%s';
 
     /**
      * API URL: Parameter text
      */
-    const API_URL_TEXT             = 'text=%s';
+    const API_URL_TEXT = 'text=%s';
 
     /**
      * API URL: Parameter source_lang
      */
-    const API_URL_SOURCE_LANG      = 'source_lang=%s';
+    const API_URL_SOURCE_LANG = 'source_lang=%s';
 
     /**
      * API URL: Parameter target_lang
@@ -42,17 +42,17 @@ class DeepL
     /**
      * API URL: Parameter tag_handling
      */
-    const API_URL_TAG_HANDLING     = 'tag_handling=%s';
+    const API_URL_TAG_HANDLING = 'tag_handling=%s';
 
     /**
      * API URL: Parameter ignore_tags
      */
-    const API_URL_IGNORE_TAGS      = 'ignore_tags=%s';
+    const API_URL_IGNORE_TAGS = 'ignore_tags=%s';
 
     /**
      * API URL: Parameter formality
      */
-    const API_URL_FORMALITY        = 'formality=%s';
+    const API_URL_FORMALITY = 'formality=%s';
 
     /**
      * DeepL HTTP error codes
@@ -132,7 +132,7 @@ class DeepL
      * @param string  $authKey
      * @param integer $apiVersion
      */
-    public function __construct($authKey, $apiVersion = 1)
+    public function __construct($authKey, $apiVersion = 2)
     {
         $this->authKey    = $authKey;
         $this->apiVersion = $apiVersion;
@@ -251,7 +251,7 @@ class DeepL
                 $url = DeepL::API_URL_V2;
                 break;
             default:
-                $url = DeepL::API_URL_V1;
+                $url = DeepL::API_URL_V2;
         }
 
         $url .= '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
