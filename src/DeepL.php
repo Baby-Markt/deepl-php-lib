@@ -10,14 +10,24 @@ namespace BabyMarkt\DeepL;
 class DeepL
 {
     /**
-     * API v1 URL
-     */
-    const API_URL_V1 = 'https://api.deepl.com/v1/translate';
+    * API BASE URL
+    */
+    const API_URL_BASE = '%s://%s/v%s';
 
     /**
-     * API v2 URL
+     * API URL: translate
      */
-    const API_URL_V2 = 'https://api.deepl.com/v2/translate';
+    const API_URL_RESOURCE_TRANSLATE = 'translate';
+
+    /**
+     * API URL: usage
+     */
+    const API_URL_RESOURCE_USAGE = 'usage';
+
+    /**
+     * API URL: languages
+     */
+    const API_URL_RESOURCE_LANGUAGES = 'languages ';
 
     /**
      * API URL: Parameter auth_key
@@ -132,10 +142,11 @@ class DeepL
      * @param string  $authKey
      * @param integer $apiVersion
      */
-    public function __construct($authKey, $apiVersion = 2)
+    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com')
     {
         $this->authKey    = $authKey;
         $this->apiVersion = $apiVersion;
+        $this->host       = $host;
         $this->curl       = curl_init();
 
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
@@ -193,6 +204,16 @@ class DeepL
         return $translationsArray['translations'];
     }
 
+    public function usage()
+    {
+        $result = [];
+        $body   = '';
+        $url    = $this->buildUrl(null, null, [], [], '', 'usage');
+        $result = $this->request($url, $body);
+
+        return $result;
+    }
+
     /**
      * Check if the given languages are supported
      *
@@ -232,31 +253,30 @@ class DeepL
      * @param array  $tagHandling
      * @param array  $ignoreTags
      * @param string $formality
+     * @param string $resource
      *
      * @return string
      */
     protected function buildUrl(
-        $sourceLanguage,
-        $destinationLanguage,
-        array $tagHandling = array(),
-        array $ignoreTags = array(),
-        $formality = "default"
-    ) {
-        // select correct api url
-        switch ($this->apiVersion) {
-            case 1:
-                $url = DeepL::API_URL_V1;
-                break;
-            case 2:
-                $url = DeepL::API_URL_V2;
-                break;
-            default:
-                $url = DeepL::API_URL_V2;
+        $sourceLanguage = null,
+        $destinationLanguage = null,
+        $tagHandling = null,
+        $ignoreTags = null,
+        $formality="default",
+        $resource='translate'
+    )
+    {
+        $url  = sprintf(DeepL::API_URL_BASE, 'https', $this->host, $this->apiVersion);
+        $url .= sprintf('/%s', $resource);
+        $url .= '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
+
+        if (!empty($sourceLanguage)) {
+            $url .= '&'.sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
         }
 
-        $url .= '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
-        $url .= '&' . sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
-        $url .= '&' . sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
+        if (!empty($destinationLanguage)) {
+            $url .= '&'.sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
+        }
 
         if (!empty($tagHandling)) {
             $url .= '&' . sprintf(DeepL::API_URL_TAG_HANDLING, implode(',', $tagHandling));
