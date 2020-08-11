@@ -72,7 +72,7 @@ class DeepL
     /**
      * API URL: Parameter preserve_formatting
      */
-    const API_URL_PRESERVER_FORMATING = 'preserve_formatting=%s';
+    const API_URL_PRESERVE_FORMATTING = 'preserve_formatting=%s';
 
     /**
      * API URL: Parameter non_splitting_tags
@@ -327,7 +327,7 @@ class DeepL
         }
 
         if (false === empty($preserveFormatting)) {
-            $url .= '&'.sprintf(self::API_URL_PRESERVER_FORMATING, $preserveFormatting);
+            $url .= '&'.sprintf(self::API_URL_PRESERVE_FORMATTING, $preserveFormatting);
         }
 
         if (false === empty($nonSplittingTags)) {
