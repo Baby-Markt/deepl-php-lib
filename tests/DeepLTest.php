@@ -164,7 +164,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
 
-        $return = $buildUrl->invokeArgs($deepl, array('de', 'en', array('xml'), array('x')));
+        $return = $buildUrl->invokeArgs($deepl, array('de', 'en', 'xml', array('x')));
 
         $this->assertEquals($expectedString, $return);
     }
@@ -188,7 +188,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
 
-        $return = $buildUrl->invokeArgs($deepl, array('de', 'en', array('xml'), array('x')));
+        $return = $buildUrl->invokeArgs($deepl, array('de', 'en', 'xml', array('x')));
 
         $this->assertEquals($expectedString, $return);
     }
@@ -257,20 +257,17 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
      *
      * TEST REQUIRES VALID DEEPL AUTH KEY!!
      */
-    public function testTranslateWrongVersionSuccess()
+    public function testTranslateWrongVersion()
     {
         if (self::$authKey === false) {
             $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
+        $germanText = 'Hallo Welt';
+        $deepl      = new DeepL(self::$authKey, 3);
 
-        $deepl = new DeepL(self::$authKey, 3);
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
-        $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
-
-        $translatedText = $deepl->translate($germanText);
-
-        $this->assertEquals($expectedText, $translatedText);
+        $deepl->translate($germanText);
     }
 
     /**
@@ -293,7 +290,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
             $englishText,
             'en',
             'de',
-            array('xml')
+            'xml'
         );
 
         $this->assertEquals($expectedText, $translatedText);
@@ -319,7 +316,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
             $englishText,
             'en',
             'de',
-            array('xml'),
+            'xml',
             array('strong')
         );
 
@@ -333,11 +330,28 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     {
         $authKey    = '123456';
         $germanText = 'Hallo Welt';
-
-        $deepl     = new DeepL($authKey);
+        $deepl      = new DeepL($authKey);
 
         $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate($germanText);
+    }
+
+    /**
+     * Test usage() has certain array-keys
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testUsage()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $response = $deepl->usage();
+
+        $this->assertArrayHasKey('character_count', $response);
+        $this->assertArrayHasKey('character_limit', $response);
     }
 }

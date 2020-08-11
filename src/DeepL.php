@@ -10,8 +10,8 @@ namespace BabyMarkt\DeepL;
 class DeepL
 {
     /**
-    * API BASE URL
-    */
+     * API BASE URL
+     */
     const API_URL_BASE = '%s://%s/v%s';
 
     /**
@@ -27,7 +27,7 @@ class DeepL
     /**
      * API URL: languages
      */
-    const API_URL_RESOURCE_LANGUAGES = 'languages ';
+    const API_URL_RESOURCE_LANGUAGES = 'languages';
 
     /**
      * API URL: Parameter auth_key
@@ -65,24 +65,49 @@ class DeepL
     const API_URL_FORMALITY = 'formality=%s';
 
     /**
+     * API URL: Parameter split_sentences
+     */
+    const API_URL_SPLIT_SENTENCES= 'split_sentences=%s';
+
+    /**
+     * API URL: Parameter preserve_formatting
+     */
+    const API_URL_PRESERVER_FORMATING = 'preserve_formatting=%s';
+
+    /**
+     * API URL: Parameter non_splitting_tags
+     */
+    const API_URL_NON_SPLITTING_TAGS= 'non_splitting_tags=%s';
+
+    /**
+     * API URL: Parameter outline_detection
+     */
+    const API_URL_OUTLINE_DETECTION= 'outline_detection=%s';
+
+    /**
+     * API URL: Parameter splitting_tags
+     */
+    const API_URL_SPLITTING_TAGS = 'splitting_tags=%s';
+
+    /**
      * DeepL HTTP error codes
      *
      * @var array
      */
-    protected $errorCodes = array(
+    protected $errorCodes = [
         400 => 'Wrong request, please check error message and your parameters.',
         403 => 'Authorization failed. Please supply a valid auth_key parameter.',
         413 => 'Request Entity Too Large. The request size exceeds the current limit.',
         429 => 'Too many requests. Please wait and send your request once again.',
-        456 => 'Quota exceeded. The character limit has been reached.'
-    );
+        456 => 'Quota exceeded. The character limit has been reached.',
+    ];
 
     /**
      * Supported translation source languages
      *
      * @var array
      */
-    protected $sourceLanguages = array(
+    protected $sourceLanguages = [
         'EN',
         'DE',
         'FR',
@@ -93,15 +118,15 @@ class DeepL
         'PL',
         'RU',
         'JA',
-        'ZH'
-    );
+        'ZH',
+    ];
 
     /**
      * Supported translation destination languages
      *
      * @var array
      */
-    protected $destinationLanguages = array(
+    protected $destinationLanguages = [
         'EN',
         'DE',
         'FR',
@@ -114,8 +139,8 @@ class DeepL
         'PL',
         'RU',
         'JA',
-        'ZH'
-    );
+        'ZH',
+    ];
 
     /**
      * @var integer
@@ -177,18 +202,31 @@ class DeepL
      * @throws DeepLException
      */
     public function translate(
-        $text,
-        $sourceLanguage = 'de',
-        $destinationLanguage = 'en',
-        array $tagHandling = array(),
-        array $ignoreTags = array(),
-        $formality = "default"
+        string $text,
+        string $sourceLanguage = 'de',
+        string $destinationLanguage = 'en',
+        string $tagHandling = null,
+        array $ignoreTags = null,
+        string $formality = "default",
+        string $resource = 'translate',
+        string $splitSentences = null,
+        bool $preserveFormatting = null,
+        array $nonSplittingTags = null,
+        bool $outlineDetection = null,
+        array $splittingTags = null
     ) {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         // build the DeepL API request url
-        $url  = $this->buildUrl($sourceLanguage, $destinationLanguage, $tagHandling, $ignoreTags, $formality);
+        $url  = $this->buildUrl(
+            $sourceLanguage,
+            $destinationLanguage,
+            $tagHandling,
+            $ignoreTags,
+            $formality,
+            self::API_URL_RESOURCE_TRANSLATE
+        );
         $body = $this->buildBody($text);
 
         // request the DeepL API
@@ -204,16 +242,6 @@ class DeepL
         return $translationsArray['translations'];
     }
 
-    public function usage()
-    {
-        $result = [];
-        $body   = '';
-        $url    = $this->buildUrl(null, null, [], [], '', 'usage');
-        $result = $this->request($url, $body);
-
-        return $result;
-    }
-
     /**
      * Check if the given languages are supported
      *
@@ -224,11 +252,11 @@ class DeepL
      *
      * @throws DeepLException
      */
-    protected function checkLanguages($sourceLanguage, $destinationLanguage)
+    protected function checkLanguages(string $sourceLanguage, string $destinationLanguage)
     {
         $sourceLanguage = strtoupper($sourceLanguage);
 
-        if (!in_array($sourceLanguage, $this->sourceLanguages)) {
+        if (false === in_array($sourceLanguage, $this->sourceLanguages)) {
             throw new DeepLException(
                 sprintf('The language "%s" is not supported as source language.', $sourceLanguage)
             );
@@ -236,7 +264,7 @@ class DeepL
 
         $destinationLanguage = strtoupper($destinationLanguage);
 
-        if (!in_array($destinationLanguage, $this->destinationLanguages)) {
+        if (false === in_array($destinationLanguage, $this->destinationLanguages)) {
             throw new DeepLException(
                 sprintf('The language "%s" is not supported as destination language.', $destinationLanguage)
             );
@@ -258,66 +286,63 @@ class DeepL
      * @return string
      */
     protected function buildUrl(
-        $sourceLanguage = null,
-        $destinationLanguage = null,
-        $tagHandling = null,
-        $ignoreTags = null,
-        $formality="default",
-        $resource='translate'
-    )
-    {
-        $url  = sprintf(DeepL::API_URL_BASE, 'https', $this->host, $this->apiVersion);
+        string $sourceLanguage = null,
+        string $destinationLanguage = null,
+        string $tagHandling = null,
+        array $ignoreTags = null,
+        string $formality = 'default',
+        string $resource = 'translate',
+        string $splitSentences = null,
+        bool $preserveFormatting = null,
+        array $nonSplittingTags = null,
+        bool $outlineDetection = null,
+        array $splittingTags = null
+    ) {
+        $url = sprintf(self::API_URL_BASE, 'https', $this->host, $this->apiVersion);
         $url .= sprintf('/%s', $resource);
-        $url .= '?' . sprintf(DeepL::API_URL_AUTH_KEY, $this->authKey);
+        $url .= '?'.sprintf(self::API_URL_AUTH_KEY, $this->authKey);
 
-        if (!empty($sourceLanguage)) {
-            $url .= '&'.sprintf(DeepL::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
+        if (false === empty($sourceLanguage)) {
+            $url .= '&'.sprintf(self::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
         }
 
-        if (!empty($destinationLanguage)) {
-            $url .= '&'.sprintf(DeepL::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
+        if (false === empty($destinationLanguage)) {
+            $url .= '&'.sprintf(self::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
         }
 
-        if (!empty($tagHandling)) {
-            $url .= '&' . sprintf(DeepL::API_URL_TAG_HANDLING, implode(',', $tagHandling));
+        if (false === empty($tagHandling)) {
+            $url .= '&'.sprintf(self::API_URL_TAG_HANDLING, $tagHandling);
         }
 
-        if (!empty($ignoreTags)) {
-            $url .= '&' . sprintf(DeepL::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
+        if (false === empty($ignoreTags)) {
+            $url .= '&'.sprintf(self::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
         }
 
-        if (!empty($formality)) {
-            $url .= '&' . sprintf(DeepL::API_URL_FORMALITY, $formality);
+        if (false === empty($formality)) {
+            $url .= '&'.sprintf(self::API_URL_FORMALITY, $formality);
+        }
+
+        if (false === empty($splitSentences)) {
+            $url .= '&'.sprintf(self::API_URL_SPLIT_SENTENCES, $splitSentences);
+        }
+
+        if (false === empty($preserveFormatting)) {
+            $url .= '&'.sprintf(self::API_URL_PRESERVER_FORMATING, $preserveFormatting);
+        }
+
+        if (false === empty($nonSplittingTags)) {
+            $url .= '&'.sprintf(self::API_URL_NON_SPLITTING_TAGS, implode(',', $nonSplittingTags));
+        }
+
+        if (false === empty($outlineDetection)) {
+            $url .= '&'.sprintf(self::API_URL_OUTLINE_DETECTION, $outlineDetection);
+        }
+
+        if (false === empty($splittingTags)) {
+            $url .= '&'.sprintf(self::API_URL_SPLITTING_TAGS, implode(',', $splittingTags));
         }
 
         return $url;
-    }
-
-    /**
-     * Build the body for the DeepL API request
-     *
-     * @param string|string[] $text
-     *
-     * @return string
-     */
-    protected function buildBody($text)
-    {
-        $body  = '';
-        $first = true;
-
-        if (!is_array($text)) {
-            $text = (array)$text;
-        }
-
-        foreach ($text as $textElement) {
-            $body .= ($first ? '' : '&') . sprintf(DeepL::API_URL_TEXT, rawurlencode($textElement));
-
-            if ($first) {
-                $first = false;
-            }
-        }
-
-        return $body;
     }
 
     /**
@@ -331,9 +356,10 @@ class DeepL
      */
     protected function request($url, $body)
     {
+        curl_setopt($this->curl, CURLOPT_POST, true);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
 
         $response = curl_exec($this->curl);
 
@@ -354,5 +380,61 @@ class DeepL
         }
 
         return $translationsArray;
+    }
+
+    /**
+     * Build the body for the DeepL API request
+     *
+     * @param string|string[] $text
+     *
+     * @return string
+     */
+    protected function buildBody($text)
+    {
+        $body  = '';
+        $first = true;
+
+        if (!is_array($text)) {
+            $text = (array)$text;
+        }
+
+        foreach ($text as $textElement) {
+            $body .= ($first ? '' : '&').sprintf(self::API_URL_TEXT, rawurlencode($textElement));
+
+            if ($first) {
+                $first = false;
+            }
+        }
+
+        return $body;
+    }
+
+    /**
+     * @return array
+     * @throws DeepLException
+     */
+    public function usage()
+    {
+        $result = [];
+        $body   = '';
+        $url    = $this->buildUrl(null, null, null, null, '', self::API_URL_RESOURCE_USAGE);
+        $result = $this->request($url, $body);
+
+        return $result;
+    }
+
+
+    /**
+     * @return array
+     * @throws DeepLException
+     */
+    public function languages()
+    {
+        $result = [];
+        $body   = '';
+        $url    = $this->buildUrl(null, null, [], [], '', self::API_URL_RESOURCE_LANGUAGES);
+        $result = $this->request($url, $body);
+
+        return $result;
     }
 }
