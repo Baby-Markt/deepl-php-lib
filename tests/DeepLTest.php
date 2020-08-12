@@ -373,7 +373,6 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('language', $language);
             $this->assertArrayHasKey('name', $language);
         }
-
     }
 
     /**
@@ -391,7 +390,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
 
-        $return = $buildUrl->invokeArgs($deepl,array());
+        $return = $buildUrl->invokeArgs($deepl, array());
 
         $this->assertEquals($expectedString, $return);
     }
@@ -412,7 +411,7 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
 
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
 
-        $return = $buildUrl->invokeArgs($deepl,array());
+        $return = $buildUrl->invokeArgs($deepl, array());
 
         $this->assertEquals($expectedString, $return);
     }
