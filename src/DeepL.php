@@ -9,10 +9,12 @@ namespace BabyMarkt\DeepL;
  */
 class DeepL
 {
+    const API_URL_SCHEMA = 'https';
     /**
      * API BASE URL
+     * https://api.deepl.com/v2/[resource]?auth_key=[yourAuthKey]
      */
-    const API_URL_BASE = '%s://%s/v%s';
+    const API_URL_BASE = '%s://%s/v%s/%s?auth_key=%s';
 
     /**
      * API URL: translate
@@ -29,10 +31,6 @@ class DeepL
      */
     const API_URL_RESOURCE_LANGUAGES = 'languages';
 
-    /**
-     * API URL: Parameter auth_key
-     */
-    const API_URL_AUTH_KEY = 'auth_key=%s';
 
     /**
      * API URL: Parameter text
@@ -67,7 +65,7 @@ class DeepL
     /**
      * API URL: Parameter split_sentences
      */
-    const API_URL_SPLIT_SENTENCES= 'split_sentences=%s';
+    const API_URL_SPLIT_SENTENCES = 'split_sentences=%s';
 
     /**
      * API URL: Parameter preserve_formatting
@@ -77,12 +75,12 @@ class DeepL
     /**
      * API URL: Parameter non_splitting_tags
      */
-    const API_URL_NON_SPLITTING_TAGS= 'non_splitting_tags=%s';
+    const API_URL_NON_SPLITTING_TAGS = 'non_splitting_tags=%s';
 
     /**
      * API URL: Parameter outline_detection
      */
-    const API_URL_OUTLINE_DETECTION= 'outline_detection=%s';
+    const API_URL_OUTLINE_DETECTION = 'outline_detection=%s';
 
     /**
      * API URL: Parameter splitting_tags
@@ -94,20 +92,20 @@ class DeepL
      *
      * @var array
      */
-    protected $errorCodes = [
+    protected $errorCodes = array(
         400 => 'Wrong request, please check error message and your parameters.',
         403 => 'Authorization failed. Please supply a valid auth_key parameter.',
         413 => 'Request Entity Too Large. The request size exceeds the current limit.',
         429 => 'Too many requests. Please wait and send your request once again.',
         456 => 'Quota exceeded. The character limit has been reached.',
-    ];
+    );
 
     /**
      * Supported translation source languages
      *
      * @var array
      */
-    protected $sourceLanguages = [
+    protected $sourceLanguages = array(
         'EN',
         'DE',
         'FR',
@@ -119,14 +117,14 @@ class DeepL
         'RU',
         'JA',
         'ZH',
-    ];
+    );
 
     /**
      * Supported translation destination languages
      *
      * @var array
      */
-    protected $destinationLanguages = [
+    protected $destinationLanguages = array(
         'EN',
         'DE',
         'FR',
@@ -140,9 +138,11 @@ class DeepL
         'RU',
         'JA',
         'ZH',
-    ];
+    );
 
     /**
+     * DeepL API Version (v2 is default since 2018)
+     *
      * @var integer
      */
     protected $apiVersion;
@@ -162,10 +162,18 @@ class DeepL
     protected $curl;
 
     /**
+     * Hostname of the API (in most cases api.deepl.com)
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
      * DeepL constructor
      *
      * @param string  $authKey
      * @param integer $apiVersion
+     * @param string  $host
      */
     public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com')
     {
@@ -193,49 +201,62 @@ class DeepL
      * @param string|string[] $text
      * @param string          $sourceLanguage
      * @param string          $destinationLanguage
-     * @param array           $tagHandling
-     * @param array           $ignoreTags
+     * @param string          $tagHandling
+     * @param array|null      $ignoreTags
      * @param string          $formality
+     * @param string          $resource
+     * @param null            $splitSentences
+     * @param null            $preserveFormatting
+     * @param array|null      $nonSplittingTags
+     * @param null            $outlineDetection
+     * @param array|null      $splittingTags
      *
-     * @return string|string[]
-     *
+     * @return mixed
      * @throws DeepLException
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function translate(
-        string $text,
-        string $sourceLanguage = 'de',
-        string $destinationLanguage = 'en',
-        string $tagHandling = null,
+        $text,
+        $sourceLanguage = 'de',
+        $destinationLanguage = 'en',
+        $tagHandling = null,
         array $ignoreTags = null,
-        string $formality = "default",
-        string $resource = 'translate',
-        string $splitSentences = null,
-        bool $preserveFormatting = null,
+        $formality = "default",
+        $resource = self::API_URL_RESOURCE_TRANSLATE,
+        $splitSentences = null,
+        $preserveFormatting = null,
         array $nonSplittingTags = null,
-        bool $outlineDetection = null,
+        $outlineDetection = null,
         array $splittingTags = null
     ) {
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         // build the DeepL API request url
-        $url  = $this->buildUrl(
+        $url = $this->buildUrl(
             $sourceLanguage,
             $destinationLanguage,
             $tagHandling,
             $ignoreTags,
             $formality,
-            self::API_URL_RESOURCE_TRANSLATE
+            $resource,
+            $splitSentences,
+            $preserveFormatting,
+            $nonSplittingTags,
+            $outlineDetection,
+            $splittingTags
         );
+
         $body = $this->buildBody($text);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
         $translationsCount = count($translationsArray['translations']);
 
-        if ($translationsCount == 0) {
+        if ($translationsCount === 0) {
             throw new DeepLException('No translations found.');
-        } elseif ($translationsCount == 1) {
+        } elseif ($translationsCount === 1) {
             return $translationsArray['translations'][0]['text'];
         }
 
@@ -252,7 +273,7 @@ class DeepL
      *
      * @throws DeepLException
      */
-    protected function checkLanguages(string $sourceLanguage, string $destinationLanguage)
+    protected function checkLanguages($sourceLanguage, $destinationLanguage)
     {
         $sourceLanguage = strtoupper($sourceLanguage);
 
@@ -284,23 +305,25 @@ class DeepL
      * @param string $resource
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     protected function buildUrl(
-        string $sourceLanguage = null,
-        string $destinationLanguage = null,
-        string $tagHandling = null,
+        $sourceLanguage = null,
+        $destinationLanguage = null,
+        $tagHandling = null,
         array $ignoreTags = null,
-        string $formality = 'default',
-        string $resource = 'translate',
-        string $splitSentences = null,
-        bool $preserveFormatting = null,
+        $formality = 'default',
+        $resource = 'translate',
+        $splitSentences = null,
+        $preserveFormatting = null,
         array $nonSplittingTags = null,
-        bool $outlineDetection = null,
+        $outlineDetection = null,
         array $splittingTags = null
     ) {
-        $url = sprintf(self::API_URL_BASE, 'https', $this->host, $this->apiVersion);
-        $url .= sprintf('/%s', $resource);
-        $url .= '?'.sprintf(self::API_URL_AUTH_KEY, $this->authKey);
+        $url = $this->buildBaseUrl($resource);
 
         if (false === empty($sourceLanguage)) {
             $url .= '&'.sprintf(self::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
@@ -346,40 +369,24 @@ class DeepL
     }
 
     /**
-     * Make a request to the given URL
+     * Creates the Base-Url which all of the 3 API-recourses have in common.
      *
-     * @param string $url
+     * @param string $resource
      *
-     * @return array
-     *
-     * @throws DeepLException
+     * @return string
      */
-    protected function request($url, $body)
+    protected function buildBaseUrl($resource = 'translate')
     {
-        curl_setopt($this->curl, CURLOPT_POST, true);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        $url = sprintf(
+            self::API_URL_BASE,
+            self::API_URL_SCHEMA,
+            $this->host,
+            $this->apiVersion,
+            $resource,
+            $this->authKey
+        );
 
-        $response = curl_exec($this->curl);
-
-        if (curl_errno($this->curl)) {
-            throw new DeepLException('There was a cURL Request Error.');
-        }
-
-        $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-
-        if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
-            throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
-        }
-
-        $translationsArray = json_decode($response, true);
-
-        if (!$translationsArray) {
-            throw new DeepLException('The Response seems to not be valid JSON.');
-        }
-
-        return $translationsArray;
+        return $url;
     }
 
     /**
@@ -410,31 +417,69 @@ class DeepL
     }
 
     /**
+     * Make a request to the given URL
+     *
+     * @param string $url
+     *
+     * @return array
+     *
+     * @throws DeepLException
+     */
+    protected function request($url, $body)
+    {
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+        $response = curl_exec($this->curl);
+
+        if (curl_errno($this->curl)) {
+            throw new DeepLException('There was a cURL Request Error.');
+        }
+
+        $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+
+        if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
+            throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
+        }
+
+        $translationsArray = json_decode($response, true);
+
+        if (!$translationsArray) {
+            throw new DeepLException('The Response seems to not be valid JSON.');
+        }
+
+        return $translationsArray;
+    }
+
+    /**
+     * Calls the usage-Endpoint and return Json-response as an array
+     *
      * @return array
      * @throws DeepLException
      */
     public function usage()
     {
-        $result = [];
-        $body   = '';
-        $url    = $this->buildUrl(null, null, null, null, '', self::API_URL_RESOURCE_USAGE);
-        $result = $this->request($url, $body);
+        $body  = '';
+        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
+        $usage = $this->request($url, $body);
 
-        return $result;
+        return $usage;
     }
 
-
     /**
+     * Call languages-Endpoint and return Json-response as an Array
+     *
      * @return array
      * @throws DeepLException
      */
     public function languages()
     {
-        $result = [];
-        $body   = '';
-        $url    = $this->buildUrl(null, null, [], [], '', self::API_URL_RESOURCE_LANGUAGES);
-        $result = $this->request($url, $body);
+        $body      = '';
+        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $languages = $this->request($url, $body);
 
-        return $result;
+        return $languages;
     }
 }
