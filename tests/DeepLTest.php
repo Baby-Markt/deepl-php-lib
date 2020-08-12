@@ -354,4 +354,66 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('character_count', $response);
         $this->assertArrayHasKey('character_limit', $response);
     }
+
+    /**
+     * Test languages() has certain array-keys
+     *
+     * TEST REQUIRES VALID DEEPL AUTH KEY!!
+     */
+    public function testLanguages()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $response = $deepl->languages();
+
+        foreach ($response as $language) {
+            $this->assertArrayHasKey('language', $language);
+            $this->assertArrayHasKey('name', $language);
+        }
+
+    }
+
+    /**
+     * Test buildBaseUrl()
+     */
+    public function testbuildBaseUrl()
+    {
+        $authKey = '123456';
+
+        $expectedString = 'https://api.deepl.com/v2/translate?'. http_build_query(array(
+                'auth_key' => $authKey
+            ));
+
+        $deepl = new DeepL($authKey);
+
+        $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
+
+        $return = $buildUrl->invokeArgs($deepl,array());
+
+        $this->assertEquals($expectedString, $return);
+    }
+
+    /**
+     * Test buildBaseUrl() with own host
+     */
+    public function testbuildBaseUrlHost()
+    {
+        $authKey = '123456';
+        $host    = 'myownhost.dev';
+
+        $expectedString = 'https://'.$host.'/v2/translate?'. http_build_query(array(
+                'auth_key' => $authKey
+            ));
+
+        $deepl = new DeepL($authKey, 2, $host);
+
+        $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
+
+        $return = $buildUrl->invokeArgs($deepl,array());
+
+        $this->assertEquals($expectedString, $return);
+    }
 }
