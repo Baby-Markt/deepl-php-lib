@@ -431,12 +431,12 @@ class DeepL
         $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
         $responseArray = json_decode($response, true);
 
-        if ($httpCode != 200) {
+        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
             throw new DeepLException($responseArray['message'], $httpCode);
         }
 
         if (false === is_array($responseArray)) {
-            throw new DeepLException('The Response seems to not be valid JSON.');
+            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
         }
 
         return $responseArray;
