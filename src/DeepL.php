@@ -31,7 +31,6 @@ class DeepL
      */
     const API_URL_RESOURCE_LANGUAGES = 'languages';
 
-
     /**
      * API URL: Parameter text
      */
@@ -86,19 +85,6 @@ class DeepL
      * API URL: Parameter splitting_tags
      */
     const API_URL_SPLITTING_TAGS = 'splitting_tags=%s';
-
-    /**
-     * DeepL HTTP error codes
-     *
-     * @var array
-     */
-    protected $errorCodes = array(
-        400 => 'Wrong request, please check error message and your parameters.',
-        403 => 'Authorization failed. Please supply a valid auth_key parameter.',
-        413 => 'Request Entity Too Large. The request size exceeds the current limit.',
-        429 => 'Too many requests. Please wait and send your request once again.',
-        456 => 'Quota exceeded. The character limit has been reached.',
-    );
 
     /**
      * Supported translation source languages
@@ -297,12 +283,17 @@ class DeepL
     /**
      * Build the URL for the DeepL API request
      *
-     * @param string $sourceLanguage
-     * @param string $destinationLanguage
-     * @param array  $tagHandling
-     * @param array  $ignoreTags
-     * @param string $formality
-     * @param string $resource
+     * @param string     $sourceLanguage
+     * @param string     $destinationLanguage
+     * @param string     $tagHandling
+     * @param array|null $ignoreTags
+     * @param string     $formality
+     * @param string     $resource
+     * @param null       $splitSentences
+     * @param null       $preserveFormatting
+     * @param array|null $nonSplittingTags
+     * @param null       $outlineDetection
+     * @param array|null $splittingTags
      *
      * @return string
      *
@@ -316,11 +307,11 @@ class DeepL
         $tagHandling = null,
         array $ignoreTags = null,
         $formality = 'default',
-        $resource = 'translate',
+        $resource = self::API_URL_RESOURCE_TRANSLATE,
         $splitSentences = null,
         $preserveFormatting = null,
         array $nonSplittingTags = null,
-        $outlineDetection = null,
+        $outlineDetection = 1,
         array $splittingTags = null
     ) {
         $url = $this->buildBaseUrl($resource);
@@ -338,7 +329,7 @@ class DeepL
         }
 
         if (false === empty($ignoreTags)) {
-            $url .= '&'.sprintf(self::API_URL_IGNORE_TAGS, implode(',', $ignoreTags));
+            $url .= '&'.sprintf(self::API_URL_IGNORE_TAGS, urlencode(implode(',', $ignoreTags)));
         }
 
         if (false === empty($formality)) {
@@ -354,15 +345,15 @@ class DeepL
         }
 
         if (false === empty($nonSplittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_NON_SPLITTING_TAGS, implode(',', $nonSplittingTags));
+            $url .= '&'.sprintf(self::API_URL_NON_SPLITTING_TAGS, urlencode(implode(',', $nonSplittingTags)));
         }
 
-        if (false === empty($outlineDetection)) {
+        if (0 === $outlineDetection) {
             $url .= '&'.sprintf(self::API_URL_OUTLINE_DETECTION, $outlineDetection);
         }
 
         if (false === empty($splittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_SPLITTING_TAGS, implode(',', $splittingTags));
+            $url .= '&'.sprintf(self::API_URL_SPLITTING_TAGS, urlencode(implode(',', $splittingTags)));
         }
 
         return $url;
@@ -437,20 +428,18 @@ class DeepL
         if (curl_errno($this->curl)) {
             throw new DeepLException('There was a cURL Request Error.');
         }
+        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+        $responseArray = json_decode($response, true);
 
-        $httpCode = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-
-        if ($httpCode != 200 && array_key_exists($httpCode, $this->errorCodes)) {
-            throw new DeepLException($this->errorCodes[$httpCode], $httpCode);
+        if ($httpCode != 200) {
+            throw new DeepLException($responseArray['message'], $httpCode);
         }
 
-        $translationsArray = json_decode($response, true);
-
-        if (!$translationsArray) {
+        if (false === is_array($responseArray)) {
             throw new DeepLException('The Response seems to not be valid JSON.');
         }
 
-        return $translationsArray;
+        return $responseArray;
     }
 
     /**

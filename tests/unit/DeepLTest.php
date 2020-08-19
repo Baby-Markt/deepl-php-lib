@@ -1,7 +1,9 @@
 <?php
 
-namespace BabyMarkt\DeepL;
+namespace BabyMarkt\DeepL\unit;
 
+use BabyMarkt\DeepL\DeepL;
+use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
 /**
@@ -10,31 +12,8 @@ use ReflectionClass;
  * @package BabyMarkt\DeepL
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DeepLTest extends \PHPUnit_Framework_TestCase
+class DeepLTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * DeepL Auth Key.
-     *
-     * @var bool|string
-     */
-    protected static $authKey = false;
-
-    /**
-     * Setup DeepL Auth Key.
-     */
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-
-        $authKey = getenv('DEEPL_AUTH_KEY');
-
-        if ($authKey === false) {
-            return;
-        }
-
-        self::$authKey = $authKey;
-    }
-
     /**
      * Get protected method
      *
@@ -211,119 +190,6 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() success with v2 API
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testTranslateSuccess()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl = new DeepL(self::$authKey);
-
-        $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
-
-        $translatedText = $deepl->translate($germanText);
-
-        $this->assertEquals($expectedText, $translatedText);
-    }
-
-    /**
-     * Test translate() success with v1 API
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testTranslateV1Success()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl = new DeepL(self::$authKey, 1);
-
-        $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
-
-        $translatedText = $deepl->translate($germanText);
-
-        $this->assertEquals($expectedText, $translatedText);
-    }
-
-    /**
-     * Test translate() success with default v2 API
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testTranslateWrongVersion()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-        $germanText = 'Hallo Welt';
-        $deepl      = new DeepL(self::$authKey, 3);
-
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
-
-        $deepl->translate($germanText);
-    }
-
-    /**
-     * Test translate() with tag handling success
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testTranslateTagHandlingSuccess()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl = new DeepL(self::$authKey);
-
-        $englishText  = '<strong>text to translate</strong>';
-        $expectedText = '<strong>zu übersetzender Text</strong>';
-
-        $translatedText = $deepl->translate(
-            $englishText,
-            'en',
-            'de',
-            'xml'
-        );
-
-        $this->assertEquals($expectedText, $translatedText);
-    }
-
-    /**
-     * Test translate() with tag ignored success
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testTranslateIgnoreTagsSuccess()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl = new DeepL(self::$authKey);
-
-        $englishText  = '<strong>text to do not translate</strong><p>text to translate</p>';
-        $expectedText = '<strong>text to do not translate</strong><p>zu übersetzender Text</p>';
-
-        $translatedText = $deepl->translate(
-            $englishText,
-            'en',
-            'de',
-            'xml',
-            array('strong')
-        );
-
-        $this->assertEquals($expectedText, $translatedText);
-    }
-
-    /**
      * Test translate()
      */
     public function testTranslateException()
@@ -335,44 +201,6 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate($germanText);
-    }
-
-    /**
-     * Test usage() has certain array-keys
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testUsage()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl    = new DeepL(self::$authKey);
-        $response = $deepl->usage();
-
-        $this->assertArrayHasKey('character_count', $response);
-        $this->assertArrayHasKey('character_limit', $response);
-    }
-
-    /**
-     * Test languages() has certain array-keys
-     *
-     * TEST REQUIRES VALID DEEPL AUTH KEY!!
-     */
-    public function testLanguages()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl    = new DeepL(self::$authKey);
-        $response = $deepl->languages();
-
-        foreach ($response as $language) {
-            $this->assertArrayHasKey('language', $language);
-            $this->assertArrayHasKey('name', $language);
-        }
     }
 
     /**
@@ -412,6 +240,37 @@ class DeepLTest extends \PHPUnit_Framework_TestCase
         $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
 
         $return = $buildUrl->invokeArgs($deepl, array());
+
+        $this->assertEquals($expectedString, $return);
+    }
+
+
+    public function testBuildUrlWithAllParams()
+    {
+        $authKey = '123456';
+        // created with DeepL Simulator: https://www.deepl.com/docs-api/simulator/
+        $expectedString  = 'https://api.deepl.com/v2/translate?auth_key='.$authKey;
+        $expectedString .= '&source_lang=en&target_lang=de&tag_handling=xml&ignore_tags=html%2Chtml5%2Chtml6';
+        $expectedString .= '&formality=more&split_sentences=nonewlines&preserve_formatting=1';
+        $expectedString .= '&non_splitting_tags=href%2Chref2&outline_detection=0&splitting_tags=p%2Cbr';
+
+        $deepl    = new DeepL($authKey);
+        $buildUrl = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildUrl');
+        $args     = array(
+            'en',                          //$sourceLanguage
+            'de',                          //$destinationLanguage
+            'xml',                         //$tagHandling
+            array('html','html5','html6'), //$ignoreTags
+            'more',                        //$formality
+            'translate',                   //$resource
+            'nonewlines',                  //$splitSentences
+            1,                             //$preserveFormatting
+            array('href','href2'),         //$nonSplittingTags
+            0,                             //$outlineDetection
+            array('p','br')                //$splittingTags
+        );
+
+        $return = $buildUrl->invokeArgs($deepl, $args);
 
         $this->assertEquals($expectedString, $return);
     }
