@@ -32,61 +32,6 @@ class DeepL
     const API_URL_RESOURCE_LANGUAGES = 'languages';
 
     /**
-     * API URL: Parameter text
-     */
-    const API_URL_TEXT = 'text=%s';
-
-    /**
-     * API URL: Parameter source_lang
-     */
-    const API_URL_SOURCE_LANG = 'source_lang=%s';
-
-    /**
-     * API URL: Parameter target_lang
-     */
-    const API_URL_DESTINATION_LANG = 'target_lang=%s';
-
-    /**
-     * API URL: Parameter tag_handling
-     */
-    const API_URL_TAG_HANDLING = 'tag_handling=%s';
-
-    /**
-     * API URL: Parameter ignore_tags
-     */
-    const API_URL_IGNORE_TAGS = 'ignore_tags=%s';
-
-    /**
-     * API URL: Parameter formality
-     */
-    const API_URL_FORMALITY = 'formality=%s';
-
-    /**
-     * API URL: Parameter split_sentences
-     */
-    const API_URL_SPLIT_SENTENCES = 'split_sentences=%s';
-
-    /**
-     * API URL: Parameter preserve_formatting
-     */
-    const API_URL_PRESERVE_FORMATTING = 'preserve_formatting=%s';
-
-    /**
-     * API URL: Parameter non_splitting_tags
-     */
-    const API_URL_NON_SPLITTING_TAGS = 'non_splitting_tags=%s';
-
-    /**
-     * API URL: Parameter outline_detection
-     */
-    const API_URL_OUTLINE_DETECTION = 'outline_detection=%s';
-
-    /**
-     * API URL: Parameter splitting_tags
-     */
-    const API_URL_SPLITTING_TAGS = 'splitting_tags=%s';
-
-    /**
      * Supported translation source languages
      *
      * @var array
