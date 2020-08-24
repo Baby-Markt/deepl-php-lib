@@ -219,22 +219,25 @@ class DeepL
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
-        // build the DeepL API request url
-        $url = $this->buildUrl(
-            $sourceLanguage,
-            $destinationLanguage,
-            $tagHandling,
-            $ignoreTags,
-            $formality,
-            $resource,
-            $splitSentences,
-            $preserveFormatting,
-            $nonSplittingTags,
-            $outlineDetection,
-            $splittingTags
+        $url              = $this->buildBaseUrl($resource);
+        $splittingTags    = (true === is_array($splittingTags)) ? implode(',', $splittingTags) : null;
+        $nonSplittingTags = (true === is_array($nonSplittingTags)) ? implode(',', $nonSplittingTags) : null;
+        $ignoreTags       = (true === is_array($ignoreTags)) ? implode(',', $ignoreTags) : null;
+        $paramsArray      = array(
+            'text' => $text,
+            'source_lang' => $sourceLanguage,
+            'target_lang' => $destinationLanguage,
+            'ignore_tags' => $ignoreTags,
+            'tag_handling' => $tagHandling,
+            'formality' => $formality,
+            'split_sentences' => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'non_splitting_tags' => $nonSplittingTags,
+            'outline_detection' => $outlineDetection,
+            'splitting_tags' => $splittingTags
         );
 
-        $body = $this->buildBody($text);
+        $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
@@ -280,86 +283,7 @@ class DeepL
         return true;
     }
 
-    /**
-     * Build the URL for the DeepL API request
-     *
-     * @param string     $sourceLanguage
-     * @param string     $destinationLanguage
-     * @param string     $tagHandling
-     * @param array|null $ignoreTags
-     * @param string     $formality
-     * @param string     $resource
-     * @param null       $splitSentences
-     * @param null       $preserveFormatting
-     * @param array|null $nonSplittingTags
-     * @param null       $outlineDetection
-     * @param array|null $splittingTags
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     */
-    protected function buildUrl(
-        $sourceLanguage = null,
-        $destinationLanguage = null,
-        $tagHandling = null,
-        array $ignoreTags = null,
-        $formality = 'default',
-        $resource = self::API_URL_RESOURCE_TRANSLATE,
-        $splitSentences = null,
-        $preserveFormatting = null,
-        array $nonSplittingTags = null,
-        $outlineDetection = 1,
-        array $splittingTags = null
-    ) {
-        $url = $this->buildBaseUrl($resource);
-
-        if (false === empty($sourceLanguage)) {
-            $url .= '&'.sprintf(self::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
-        }
-
-        if (false === empty($destinationLanguage)) {
-            $url .= '&'.sprintf(self::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
-        }
-
-        if (false === empty($tagHandling)) {
-            $url .= '&'.sprintf(self::API_URL_TAG_HANDLING, $tagHandling);
-        }
-
-        if (false === empty($ignoreTags)) {
-            $url .= '&'.sprintf(self::API_URL_IGNORE_TAGS, urlencode(implode(',', $ignoreTags)));
-        }
-
-        if (false === empty($formality)) {
-            $url .= '&'.sprintf(self::API_URL_FORMALITY, $formality);
-        }
-
-        if (false === empty($splitSentences)) {
-            $url .= '&'.sprintf(self::API_URL_SPLIT_SENTENCES, $splitSentences);
-        }
-
-        if (false === empty($preserveFormatting)) {
-            $url .= '&'.sprintf(self::API_URL_PRESERVE_FORMATTING, $preserveFormatting);
-        }
-
-        if (false === empty($nonSplittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_NON_SPLITTING_TAGS, urlencode(implode(',', $nonSplittingTags)));
-        }
-
-        if (0 === $outlineDetection) {
-            $url .= '&'.sprintf(self::API_URL_OUTLINE_DETECTION, $outlineDetection);
-        }
-
-        if (false === empty($splittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_SPLITTING_TAGS, urlencode(implode(',', $splittingTags)));
-        }
-
-        return $url;
-    }
-
-    /**
+   /**
      * Creates the Base-Url which all of the 3 API-recourses have in common.
      *
      * @param string $resource
@@ -380,32 +304,6 @@ class DeepL
         return $url;
     }
 
-    /**
-     * Build the body for the DeepL API request
-     *
-     * @param string|string[] $text
-     *
-     * @return string
-     */
-    protected function buildBody($text)
-    {
-        $body  = '';
-        $first = true;
-
-        if (!is_array($text)) {
-            $text = (array)$text;
-        }
-
-        foreach ($text as $textElement) {
-            $body .= ($first ? '' : '&').sprintf(self::API_URL_TEXT, rawurlencode($textElement));
-
-            if ($first) {
-                $first = false;
-            }
-        }
-
-        return $body;
-    }
 
     /**
      * Make a request to the given URL
