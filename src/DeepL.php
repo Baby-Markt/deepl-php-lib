@@ -142,6 +142,62 @@ class DeepL
     }
 
     /**
+     * Creates the Base-Url which all of the 3 API-resources have in common.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    protected function buildBaseUrl($resource = 'translate')
+    {
+        $url = sprintf(
+            self::API_URL_BASE,
+            self::API_URL_SCHEMA,
+            $this->host,
+            $this->apiVersion,
+            $resource,
+            $this->authKey
+        );
+
+        return $url;
+    }
+
+    /**
+     * Make a request to the given URL
+     *
+     * @param string $url
+     *
+     * @return array
+     *
+     * @throws DeepLException
+     */
+    protected function request($url, $body)
+    {
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+        $response = curl_exec($this->curl);
+
+        if (curl_errno($this->curl)) {
+            throw new DeepLException('There was a cURL Request Error.');
+        }
+        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+        $responseArray = json_decode($response, true);
+
+        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
+            throw new DeepLException($responseArray['message'], $httpCode);
+        }
+
+        if (false === is_array($responseArray)) {
+            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
+        }
+
+        return $responseArray;
+    }
+
+    /**
      * Call languages-Endpoint and return Json-response as an Array
      *
      * @return array
@@ -191,23 +247,26 @@ class DeepL
         $outlineDetection = null,
         array $splittingTags = null
     ) {
+        $paramsArray = array(
+            'text'                => $text,
+            'source_lang'         => $sourceLanguage,
+            'target_lang'         => $destinationLanguage,
+            'splitting_tags'      => $splittingTags,
+            'non_splitting_tags'  => $nonSplittingTags,
+            'ignore_tags'         => $ignoreTags,
+            'tag_handling'        => $tagHandling,
+            'formality'           => $formality,
+            'split_sentences'     => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'outline_detection'   => $outlineDetection,
+        );
+        $paramsArray = $this->removeEmptyParams($paramsArray);
+
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         $url  = $this->buildBaseUrl($resource);
-        $body = $this->buildQuery(
-            $text,
-            $destinationLanguage,
-            $sourceLanguage,
-            $splittingTags,
-            $nonSplittingTags,
-            $ignoreTags,
-            $tagHandling,
-            $formality,
-            $splitSentences,
-            $preserveFormatting,
-            $outlineDetection
-        );
+        $body = $this->buildQuery($paramsArray);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
@@ -220,6 +279,32 @@ class DeepL
         }
 
         return $translationsArray['translations'];
+    }
+
+    /**
+     * @param array $paramsArray
+     *
+     * @return array
+     */
+    private function removeEmptyParams($paramsArray)
+    {
+
+        foreach ($paramsArray as $key => $value) {
+            if (true === empty($value)) {
+                unset($paramsArray[$key]);
+            }
+            if ('outline_detection' === $key) {
+                if (1 === $value) {
+                    unset($paramsArray[$key]);
+                }
+
+                if (0 === $value) {
+                    $paramsArray[$key] = 0;
+                }
+            }
+        }
+
+        return $paramsArray;
     }
 
     /**
@@ -253,130 +338,35 @@ class DeepL
         return true;
     }
 
-   /**
-     * Creates the Base-Url which all of the 3 API-resources have in common.
-     *
-     * @param string $resource
-     *
-     * @return string
-     */
-    protected function buildBaseUrl($resource = 'translate')
-    {
-        $url = sprintf(
-            self::API_URL_BASE,
-            self::API_URL_SCHEMA,
-            $this->host,
-            $this->apiVersion,
-            $resource,
-            $this->authKey
-        );
-
-        return $url;
-    }
-
     /**
-     * @param $text
-     * @param $destinationLanguage
-     * @param $sourceLanguage
-     * @param $splittingTags
-     * @param $nonSplittingTags
-     * @param $ignoreTags
-     * @param $tagHandling
-     * @param $formality
-     * @param $splitSentences
-     * @param $preserveFormatting
-     * @param $outlineDetection
+     * @param array $paramsArray
      *
      * @return string
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function buildQuery(
-        $text,
-        $destinationLanguage,
-        $sourceLanguage,
-        $splittingTags,
-        $nonSplittingTags,
-        $ignoreTags,
-        $tagHandling,
-        $formality,
-        $splitSentences,
-        $preserveFormatting,
-        $outlineDetection
+        $paramsArray
     ) {
-        $paramsArray      = array(
-            'text'                => $text,
-            'source_lang'         => $sourceLanguage,
-            'target_lang'         => $destinationLanguage,
-            'splitting_tags'      => $splittingTags,
-            'non_splitting_tags'  => $nonSplittingTags,
-            'ignore_tags'         => $ignoreTags,
-            'tag_handling'        => $tagHandling,
-            'formality'           => $formality,
-            'split_sentences'     => $splitSentences,
-            'preserve_formatting' => $preserveFormatting,
-            'outline_detection'   => $outlineDetection
-        );
+        if (true === is_array($paramsArray['text'])) {
+            $text = $paramsArray['text'];
+            unset($paramsArray['text']);
+            $textString = '';
+            foreach ($text as $textElement) {
+                $textString .= '&text='.rawurlencode($textElement);
+            }
+        }
 
         foreach ($paramsArray as $key => $value) {
-            if (true === is_array($value) && array() != $value) {
+            if (true === is_array($value)) {
                 $paramsArray[$key] = implode(',', $value);
-            }
-
-            if (true === empty($value) || ('text' === $key && true === is_array($value))) {
-                unset($paramsArray[$key]);
-            }
-
-            if ('outline_detection' === $key) {
-                $paramsArray[$key] = ('0' != $value) ? null : '0';
             }
         }
 
         $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
 
-        if (true === is_array($text)) {
-            $textString ='';
-            foreach ($text as $textElement) {
-                $textString .= '&text='.rawurlencode($textElement);
-            }
+        if (isset($textString)) {
             $body = $textString.'&'.$body;
         }
 
         return $body;
-    }
-
-    /**
-     * Make a request to the given URL
-     *
-     * @param string $url
-     *
-     * @return array
-     *
-     * @throws DeepLException
-     */
-    protected function request($url, $body)
-    {
-        curl_setopt($this->curl, CURLOPT_POST, true);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-
-        $response = curl_exec($this->curl);
-
-        if (curl_errno($this->curl)) {
-            throw new DeepLException('There was a cURL Request Error.');
-        }
-        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-        $responseArray = json_decode($response, true);
-
-        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
-            throw new DeepLException($responseArray['message'], $httpCode);
-        }
-
-        if (false === is_array($responseArray)) {
-            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
-        }
-
-        return $responseArray;
     }
 }
