@@ -153,7 +153,7 @@ class DeepL
         $destinationLanguage = 'en',
         $tagHandling = null,
         array $ignoreTags = null,
-        $formality = "default",
+        $formality = 'default',
         $resource = self::API_URL_RESOURCE_TRANSLATE,
         $splitSentences = null,
         $preserveFormatting = null,
@@ -165,24 +165,19 @@ class DeepL
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
         $url              = $this->buildBaseUrl($resource);
-        $splittingTags    = (true === is_array($splittingTags)) ? implode(',', $splittingTags) : null;
-        $nonSplittingTags = (true === is_array($nonSplittingTags)) ? implode(',', $nonSplittingTags) : null;
-        $ignoreTags       = (true === is_array($ignoreTags)) ? implode(',', $ignoreTags) : null;
-        $paramsArray      = array(
-            'text' => $text,
-            'source_lang' => $sourceLanguage,
-            'target_lang' => $destinationLanguage,
-            'ignore_tags' => $ignoreTags,
-            'tag_handling' => $tagHandling,
-            'formality' => $formality,
-            'split_sentences' => $splitSentences,
-            'preserve_formatting' => $preserveFormatting,
-            'non_splitting_tags' => $nonSplittingTags,
-            'outline_detection' => $outlineDetection,
-            'splitting_tags' => $splittingTags
+        $body             = $this->buildQuery(
+            $splittingTags,
+            $nonSplittingTags,
+            $ignoreTags,
+            $text,
+            $sourceLanguage,
+            $destinationLanguage,
+            $tagHandling,
+            $formality,
+            $splitSentences,
+            $preserveFormatting,
+            $outlineDetection
         );
-
-        $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
@@ -229,7 +224,7 @@ class DeepL
     }
 
    /**
-     * Creates the Base-Url which all of the 3 API-recourses have in common.
+     * Creates the Base-Url which all of the 3 API-resources have in common.
      *
      * @param string $resource
      *
@@ -313,5 +308,56 @@ class DeepL
         $languages = $this->request($url, $body);
 
         return $languages;
+    }
+
+    /**
+     * @param $splittingTags
+     * @param $nonSplittingTags
+     * @param $ignoreTags
+     * @param $text
+     * @param $sourceLanguage
+     * @param $destinationLanguage
+     * @param $tagHandling
+     * @param $formality
+     * @param $splitSentences
+     * @param $preserveFormatting
+     * @param $outlineDetection
+     *
+     * @return string
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
+    protected function buildQuery(
+        $splittingTags,
+        $nonSplittingTags,
+        $ignoreTags,
+        $text,
+        $sourceLanguage,
+        $destinationLanguage,
+        $tagHandling,
+        $formality,
+        $splitSentences,
+        $preserveFormatting,
+        $outlineDetection
+    ) {
+        $splittingTags    = (true === is_array($splittingTags)) ? implode(',', $splittingTags) : null;
+        $nonSplittingTags = (true === is_array($nonSplittingTags)) ? implode(',', $nonSplittingTags) : null;
+        $ignoreTags       = (true === is_array($ignoreTags)) ? implode(',', $ignoreTags) : null;
+        $paramsArray      = array(
+            'text'                => $text,
+            'source_lang'         => $sourceLanguage,
+            'target_lang'         => $destinationLanguage,
+            'ignore_tags'         => $ignoreTags,
+            'tag_handling'        => $tagHandling,
+            'formality'           => $formality,
+            'split_sentences'     => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'non_splitting_tags'  => $nonSplittingTags,
+            'outline_detection'   => $outlineDetection,
+            'splitting_tags'      => $splittingTags
+        );
+
+        $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
+
+        return $body;
     }
 }
