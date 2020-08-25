@@ -127,6 +127,36 @@ class DeepL
     }
 
     /**
+     * Calls the usage-Endpoint and return Json-response as an array
+     *
+     * @return array
+     * @throws DeepLException
+     */
+    public function usage()
+    {
+        $body  = '';
+        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
+        $usage = $this->request($url, $body);
+
+        return $usage;
+    }
+
+    /**
+     * Call languages-Endpoint and return Json-response as an Array
+     *
+     * @return array
+     * @throws DeepLException
+     */
+    public function languages()
+    {
+        $body      = '';
+        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $languages = $this->request($url, $body);
+
+        return $languages;
+    }
+
+    /**
      * Translate the text string or array from source to destination language
      *
      * @param string|string[] $text
@@ -161,10 +191,6 @@ class DeepL
         $outlineDetection = null,
         array $splittingTags = null
     ) {
-        if (false === isset($text)) {
-            throw new DeepLException('Text is a required Argument');
-        }
-
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
@@ -248,6 +274,76 @@ class DeepL
         return $url;
     }
 
+    /**
+     * @param $text
+     * @param $destinationLanguage
+     * @param $sourceLanguage
+     * @param $splittingTags
+     * @param $nonSplittingTags
+     * @param $ignoreTags
+     * @param $tagHandling
+     * @param $formality
+     * @param $splitSentences
+     * @param $preserveFormatting
+     * @param $outlineDetection
+     *
+     * @return string
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    protected function buildQuery(
+        $text,
+        $destinationLanguage,
+        $sourceLanguage,
+        $splittingTags,
+        $nonSplittingTags,
+        $ignoreTags,
+        $tagHandling,
+        $formality,
+        $splitSentences,
+        $preserveFormatting,
+        $outlineDetection
+    ) {
+        $paramsArray      = array(
+            'text'                => $text,
+            'source_lang'         => $sourceLanguage,
+            'target_lang'         => $destinationLanguage,
+            'splitting_tags'      => $splittingTags,
+            'non_splitting_tags'  => $nonSplittingTags,
+            'ignore_tags'         => $ignoreTags,
+            'tag_handling'        => $tagHandling,
+            'formality'           => $formality,
+            'split_sentences'     => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'outline_detection'   => $outlineDetection
+        );
+
+        foreach ($paramsArray as $key => $value) {
+            if (true === is_array($value) && array() != $value) {
+                $paramsArray[$key] = implode(',', $value);
+            }
+
+            if (true === empty($value) || ('text' === $key && true === is_array($value))) {
+                unset($paramsArray[$key]);
+            }
+
+            if ('outline_detection' === $key) {
+                $paramsArray[$key] = ('0' != $value) ? null : '0';
+            }
+        }
+
+        $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
+
+        if (true === is_array($text)) {
+            $textString ='';
+            foreach ($text as $textElement) {
+                $textString .= '&text='.rawurlencode($textElement);
+            }
+            $body = $textString.'&'.$body;
+        }
+
+        return $body;
+    }
 
     /**
      * Make a request to the given URL
@@ -282,87 +378,5 @@ class DeepL
         }
 
         return $responseArray;
-    }
-
-    /**
-     * Calls the usage-Endpoint and return Json-response as an array
-     *
-     * @return array
-     * @throws DeepLException
-     */
-    public function usage()
-    {
-        $body  = '';
-        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url, $body);
-
-        return $usage;
-    }
-
-    /**
-     * Call languages-Endpoint and return Json-response as an Array
-     *
-     * @return array
-     * @throws DeepLException
-     */
-    public function languages()
-    {
-        $body      = '';
-        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
-        $languages = $this->request($url, $body);
-
-        return $languages;
-    }
-
-    /**
-     * @param $text
-     * @param $destinationLanguage
-     * @param $sourceLanguage
-     * @param $splittingTags
-     * @param $nonSplittingTags
-     * @param $ignoreTags
-     * @param $tagHandling
-     * @param $formality
-     * @param $splitSentences
-     * @param $preserveFormatting
-     * @param $outlineDetection
-     *
-     * @return string
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     */
-    protected function buildQuery(
-        $text,
-        $destinationLanguage,
-        $sourceLanguage,
-        $splittingTags,
-        $nonSplittingTags,
-        $ignoreTags,
-        $tagHandling,
-        $formality,
-        $splitSentences,
-        $preserveFormatting,
-        $outlineDetection
-    ) {
-        $splittingTags    = (true === is_array($splittingTags)) ? implode(',', $splittingTags) : null;
-        $nonSplittingTags = (true === is_array($nonSplittingTags)) ? implode(',', $nonSplittingTags) : null;
-        $ignoreTags       = (true === is_array($ignoreTags)) ? implode(',', $ignoreTags) : null;
-        $outlineDetection = ('0' != $outlineDetection) ? null : '0';
-        $paramsArray      = array(
-            'text'                => $text,
-            'source_lang'         => $sourceLanguage,
-            'target_lang'         => $destinationLanguage,
-            'splitting_tags'      => $splittingTags ?: null,
-            'non_splitting_tags'  => $nonSplittingTags ?: null,
-            'ignore_tags'         => $ignoreTags ?: null,
-            'tag_handling'        => $tagHandling ?: null,
-            'formality'           => $formality ?: null,
-            'split_sentences'     => $splitSentences ?: null,
-            'preserve_formatting' => $preserveFormatting ?: null,
-            'outline_detection'   => $outlineDetection,
-        );
-
-        $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
-
-        return $body;
     }
 }

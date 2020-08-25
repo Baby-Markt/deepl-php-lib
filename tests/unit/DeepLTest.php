@@ -163,36 +163,146 @@ class DeepLTest extends PHPUnit_Framework_TestCase
     public function testBuildQueryWithAllArguments()
     {
         $authKey        = '123456';
-        $args           = array('text','en','de',array('p','h1'),array('br','strong'),array('href','i'),'xml','default','nonewlines',1,0);
-        $expectedString = 'text=text&source_lang=de&target_lang=en&splitting_tags=p%2Ch1&non_splitting_tags=br%2Cstrong&ignore_tags=href%2Ci&tag_handling=xml&formality=default&split_sentences=nonewlines&preserve_formatting=1&outline_detection=0';
+        $args           = array(
+            'text',
+            'en',
+            'de',
+            array('p','h1'),
+            array('br','strong'),
+            array('href','i'),
+            'xml',
+            'default',
+            'nonewlines',
+            1,
+            0
+        );
+
+        $expectation = http_build_query(array(
+            'text' => 'text',
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'splitting_tags' => 'p,h1',
+            'non_splitting_tags' => 'br,strong',
+            'ignore_tags' => 'href,i',
+            'tag_handling' => 'xml',
+            'formality' => 'default',
+            'split_sentences' => 'nonewlines',
+            'preserve_formatting' => 1,
+            'outline_detection' => 0
+        ));
+
         $deepl          = new DeepL($authKey);
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        $this->assertEquals($expectation, $return);
     }
 
     public function testBuildQueryWithAllArgumentsAndPreserveFormattingZero()
     {
         $authKey        = '123456';
-        $args           = array('text','en','de',array('p','h1'),array('br','strong'),array('href','i'),'xml','default','nonewlines',0,0);
-        $expectedString = 'text=text&source_lang=de&target_lang=en&splitting_tags=p%2Ch1&non_splitting_tags=br%2Cstrong&ignore_tags=href%2Ci&tag_handling=xml&formality=default&split_sentences=nonewlines&outline_detection=0';
+        $args = array(
+            'text',
+            'en',
+            'de',
+            array('p', 'h1'),
+            array('br', 'strong'),
+            array('href', 'i'),
+            'xml',
+            'default',
+            'nonewlines',
+            0,
+            0,
+        );
+
+        $expectation = http_build_query(array(
+            'text' => 'text',
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'splitting_tags' => 'p,h1',
+            'non_splitting_tags' => 'br,strong',
+            'ignore_tags' => 'href,i',
+            'tag_handling' => 'xml',
+            'formality' => 'default',
+            'split_sentences' => 'nonewlines',
+            'outline_detection' => 0
+        ));
         $deepl          = new DeepL($authKey);
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        $this->assertEquals($expectation, $return);
     }
 
     public function testBuildQueryWithAllArgumentsAndOutlineDetectionOne()
     {
         $authKey        = '123456';
-        $args           = array('text','en','de',array('p','h1'),array('br','strong'),array('href','i'),'xml','default','nonewlines',0,1);
-        $expectedString = 'text=text&source_lang=de&target_lang=en&splitting_tags=p%2Ch1&non_splitting_tags=br%2Cstrong&ignore_tags=href%2Ci&tag_handling=xml&formality=default&split_sentences=nonewlines';
+        $args = array(
+            'text',
+            'en',
+            'de',
+            array('p', 'h1'),
+            array('br', 'strong'),
+            array('href', 'i'),
+            'xml',
+            'default',
+            'nonewlines',
+            0,
+            1,
+        );
+
+        $expectation = http_build_query(array(
+            'text' => 'text',
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'splitting_tags' => 'p,h1',
+            'non_splitting_tags' => 'br,strong',
+            'ignore_tags' => 'href,i',
+            'tag_handling' => 'xml',
+            'formality' => 'default',
+            'split_sentences' => 'nonewlines',
+        ));
         $deepl          = new DeepL($authKey);
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        $this->assertEquals($expectation, $return);
+    }
+
+    public function testBuildQueryWithAllArgumentsAndMultipleTexts()
+    {
+        $authKey        = '123456';
+        $args           = array(
+            array('text','more text','even more text'),
+            'en',
+            'de',
+            array('p','h1'),
+            array('br','strong'),
+            array('href','i'),
+            'xml',
+            'default',
+            'nonewlines',
+            1,
+            0
+        );
+        $expectation = '&text=text&text=more%20text&text=even%20more%20text&';
+        $expectation .= http_build_query(array(
+            'source_lang' => 'de',
+            'target_lang' => 'en',
+            'splitting_tags' => 'p,h1',
+            'non_splitting_tags' => 'br,strong',
+            'ignore_tags' => 'href,i',
+            'tag_handling' => 'xml',
+            'formality' => 'default',
+            'split_sentences' => 'nonewlines',
+            'preserve_formatting' => 1,
+            'outline_detection' => 0
+        ));
+
+        $deepl          = new DeepL($authKey);
+        $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
+        $return         = $buildQuery->invokeArgs($deepl, $args);
+
+        $this->assertEquals($expectation, $return);
     }
 }
