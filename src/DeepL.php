@@ -161,17 +161,21 @@ class DeepL
         $outlineDetection = null,
         array $splittingTags = null
     ) {
+        if (false === isset($text)) {
+            throw new DeepLException('Text is a required Argument');
+        }
+
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
-        $url              = $this->buildBaseUrl($resource);
-        $body             = $this->buildQuery(
+        $url  = $this->buildBaseUrl($resource);
+        $body = $this->buildQuery(
+            $text,
+            $destinationLanguage,
+            $sourceLanguage,
             $splittingTags,
             $nonSplittingTags,
             $ignoreTags,
-            $text,
-            $sourceLanguage,
-            $destinationLanguage,
             $tagHandling,
             $formality,
             $splitSentences,
@@ -311,12 +315,12 @@ class DeepL
     }
 
     /**
+     * @param $text
+     * @param $destinationLanguage
+     * @param $sourceLanguage
      * @param $splittingTags
      * @param $nonSplittingTags
      * @param $ignoreTags
-     * @param $text
-     * @param $sourceLanguage
-     * @param $destinationLanguage
      * @param $tagHandling
      * @param $formality
      * @param $splitSentences
@@ -327,12 +331,12 @@ class DeepL
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     protected function buildQuery(
+        $text,
+        $destinationLanguage,
+        $sourceLanguage,
         $splittingTags,
         $nonSplittingTags,
         $ignoreTags,
-        $text,
-        $sourceLanguage,
-        $destinationLanguage,
         $tagHandling,
         $formality,
         $splitSentences,
@@ -342,18 +346,19 @@ class DeepL
         $splittingTags    = (true === is_array($splittingTags)) ? implode(',', $splittingTags) : null;
         $nonSplittingTags = (true === is_array($nonSplittingTags)) ? implode(',', $nonSplittingTags) : null;
         $ignoreTags       = (true === is_array($ignoreTags)) ? implode(',', $ignoreTags) : null;
+        $outlineDetection = ('0' != $outlineDetection) ? null : '0';
         $paramsArray      = array(
             'text'                => $text,
             'source_lang'         => $sourceLanguage,
             'target_lang'         => $destinationLanguage,
-            'ignore_tags'         => $ignoreTags,
-            'tag_handling'        => $tagHandling,
-            'formality'           => $formality,
-            'split_sentences'     => $splitSentences,
-            'preserve_formatting' => $preserveFormatting,
-            'non_splitting_tags'  => $nonSplittingTags,
+            'splitting_tags'      => $splittingTags ?: null,
+            'non_splitting_tags'  => $nonSplittingTags ?: null,
+            'ignore_tags'         => $ignoreTags ?: null,
+            'tag_handling'        => $tagHandling ?: null,
+            'formality'           => $formality ?: null,
+            'split_sentences'     => $splitSentences ?: null,
+            'preserve_formatting' => $preserveFormatting ?: null,
             'outline_detection'   => $outlineDetection,
-            'splitting_tags'      => $splittingTags
         );
 
         $body = http_build_query($paramsArray, null, '&', PHP_QUERY_RFC3986);
