@@ -293,6 +293,9 @@ class DeepL
             if (true === empty($value)) {
                 unset($paramsArray[$key]);
             }
+            // Special Workaround for outline_detection which will be unset above
+            // DeepL assumes outline_detection=1 if it is not send
+            // in order to deactivate it, we need to send outline_detection=0 to the api
             if ('outline_detection' === $key) {
                 if (1 === $value) {
                     unset($paramsArray[$key]);
