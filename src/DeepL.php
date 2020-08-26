@@ -166,6 +166,7 @@ class DeepL
      * Make a request to the given URL
      *
      * @param string $url
+     * @param string $body
      *
      * @return array
      *
@@ -346,9 +347,8 @@ class DeepL
      *
      * @return string
      */
-    protected function buildQuery(
-        $paramsArray
-    ) {
+    protected function buildQuery($paramsArray)
+    {
         if (true === is_array($paramsArray['text'])) {
             $text = $paramsArray['text'];
             unset($paramsArray['text']);
