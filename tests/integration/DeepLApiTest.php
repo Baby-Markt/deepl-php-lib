@@ -273,4 +273,50 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             'more'                         //$formality
         );
     }
+
+
+    /**
+     * Test to Test the Tag-Handling.
+     */
+    public function testTranslateWithHTML()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl           = new DeepL(self::$authKey);
+        $textToTranslate = array(
+            'Hello World<strong>This should stay the same</strong>',
+            'Another Text<br> new line <p>this is a paragraph</p>'
+        );
+
+        $expectedArray   = array(
+            array(
+                'detected_source_language' => "EN",
+                'text'                     => "Hallo Welt<strong>This should stay the same</strong>",
+            ),
+            array(
+                'detected_source_language' => "EN",
+                'text'                     => "Ein weiterer Text neue Zeile <p>dies ist ein Absatz</p>",
+            ),
+
+        );
+
+        $translatedText = $deepl->translate(
+            $textToTranslate,
+            'en',           //$sourceLanguage
+            'de',        //$destinationLanguage
+            'xml',             //$tagHandling
+            array('strong'), //$ignoreTags
+            'less',                         //$formality
+            'translate',
+            1,
+            0,
+            array('br'),
+            1,
+            array('p')
+        );
+
+        $this->assertEquals($expectedArray, $translatedText);
+    }
 }
