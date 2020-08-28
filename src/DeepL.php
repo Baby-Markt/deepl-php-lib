@@ -2,8 +2,6 @@
 
 namespace BabyMarkt\DeepL;
 
-use ReflectionMethod;
-
 /**
  * DeepL API client library
  *
