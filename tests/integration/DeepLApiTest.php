@@ -317,4 +317,34 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedArray, $translatedText);
     }
+
+    /**
+     * Test translate() with unsupported sourceLanguage
+     */
+    public function testTranslateWithNotSupportedSourceLanguage()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl = new DeepL(self::$authKey);
+
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $deepl->translate('some txt', 'dk', 'de');
+    }
+
+    /**
+     * Test translate() with unsupported sourceLanguage
+     */
+    public function testTranslateWithNotSupportedDestinationLanguage()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl = new DeepL(self::$authKey);
+
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $deepl->translate('some txt', 'en', 'dk');
+    }
 }
