@@ -2,6 +2,8 @@
 
 namespace BabyMarkt\DeepL;
 
+use ReflectionMethod;
+
 /**
  * DeepL API client library
  *
@@ -15,11 +17,6 @@ class DeepL
      * https://api.deepl.com/v2/[resource]?auth_key=[yourAuthKey]
      */
     const API_URL_BASE = '%s://%s/v%s/%s?auth_key=%s';
-
-    /**
-     * API URL: translate
-     */
-    const API_URL_RESOURCE_TRANSLATE = 'translate';
 
     /**
      * API URL: usage
@@ -177,8 +174,8 @@ class DeepL
      * Translate the text string or array from source to destination language
      *
      * @param string|string[] $text
-     * @param string          $sourceLanguage
-     * @param string          $destinationLanguage
+     * @param string          $sourceLang
+     * @param string          $targetLang
      * @param string          $tagHandling
      * @param array|null      $ignoreTags
      * @param string          $formality
@@ -191,12 +188,12 @@ class DeepL
      * @return array
      * @throws DeepLException
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.UnusedParameters)
      */
     public function translate(
         $text,
-        $sourceLanguage = 'de',
-        $destinationLanguage = 'en',
+        $sourceLang = 'de',
+        $targetLang = 'en',
         $tagHandling = null,
         array $ignoreTags = null,
         $formality = 'default',
@@ -209,24 +206,17 @@ class DeepL
         if (is_array($tagHandling)) {
             throw new \InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
         }
+        $paramsArray = array();
+        $reflection  = new ReflectionMethod('Babymarkt\DeepL\DeepL', 'translate');
 
-        $paramsArray = array(
-            'text'                => $text,
-            'source_lang'         => $sourceLanguage,
-            'target_lang'         => $destinationLanguage,
-            'splitting_tags'      => $splittingTags,
-            'non_splitting_tags'  => $nonSplittingTags,
-            'ignore_tags'         => $ignoreTags,
-            'tag_handling'        => $tagHandling,
-            'formality'           => $formality,
-            'split_sentences'     => $splitSentences,
-            'preserve_formatting' => $preserveFormatting,
-            'outline_detection'   => $outlineDetection,
-        );
+        foreach ($reflection->getParameters() as $param) {
+            $paramName             = $param->name;
+            $paraKey               = $this->camelToSnake($paramName);
+            $paramsArray[$paraKey] = $$paramName;
+        }
         $paramsArray = $this->removeEmptyParams($paramsArray);
-
-        $url  = $this->buildBaseUrl();
-        $body = $this->buildQuery($paramsArray);
+        $url         = $this->buildBaseUrl();
+        $body        = $this->buildQuery($paramsArray);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
@@ -292,5 +282,30 @@ class DeepL
         }
 
         return $body;
+    }
+
+
+    /**
+     * @param string $subject
+     *
+     * @return string
+     */
+    private function camelToSnake($subject)
+    {
+        if (preg_match('/[A-Z]/', $subject) === 0) {
+            return $subject;
+        }
+        $pattern     = '/([a-z])([A-Z])/';
+        $snakeString = strtolower(
+            preg_replace_callback(
+                $pattern,
+                function ($match) {
+                    return $match[1]."_".strtolower($match[2]);
+                },
+                $subject
+            )
+        );
+
+        return $snakeString;
     }
 }
