@@ -222,7 +222,6 @@ class DeepL
      * @param string          $tagHandling
      * @param array|null      $ignoreTags
      * @param string          $formality
-     * @param string          $resource
      * @param null            $splitSentences
      * @param null            $preserveFormatting
      * @param array|null      $nonSplittingTags
@@ -241,7 +240,6 @@ class DeepL
         $tagHandling = null,
         array $ignoreTags = null,
         $formality = 'default',
-        $resource = self::API_URL_RESOURCE_TRANSLATE,
         $splitSentences = null,
         $preserveFormatting = null,
         array $nonSplittingTags = null,
@@ -266,7 +264,7 @@ class DeepL
         // make sure we only accept supported languages
         $this->checkLanguages($sourceLanguage, $destinationLanguage);
 
-        $url  = $this->buildBaseUrl($resource);
+        $url  = $this->buildBaseUrl();
         $body = $this->buildQuery($paramsArray);
 
         // request the DeepL API
