@@ -95,7 +95,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() success with default v2 API
+     * Test translate() with unknown API-Version
      */
     public function testTranslateWrongVersion()
     {
