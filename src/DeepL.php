@@ -32,46 +32,6 @@ class DeepL
     const API_URL_RESOURCE_LANGUAGES = 'languages';
 
     /**
-     * Supported translation source languages
-     *
-     * @var array
-     */
-    protected $sourceLanguages = array(
-        'EN',
-        'DE',
-        'FR',
-        'ES',
-        'PT',
-        'IT',
-        'NL',
-        'PL',
-        'RU',
-        'JA',
-        'ZH',
-    );
-
-    /**
-     * Supported translation destination languages
-     *
-     * @var array
-     */
-    protected $destinationLanguages = array(
-        'EN',
-        'DE',
-        'FR',
-        'ES',
-        'PT',
-        'PT-PT',
-        'PT-BR',
-        'IT',
-        'NL',
-        'PL',
-        'RU',
-        'JA',
-        'ZH',
-    );
-
-    /**
      * DeepL API Version (v2 is default since 2018)
      *
      * @var integer
@@ -265,9 +225,6 @@ class DeepL
         );
         $paramsArray = $this->removeEmptyParams($paramsArray);
 
-        // make sure we only accept supported languages
-        $this->checkLanguages($sourceLanguage, $destinationLanguage);
-
         $url  = $this->buildBaseUrl();
         $body = $this->buildQuery($paramsArray);
 
@@ -304,37 +261,6 @@ class DeepL
         }
 
         return $paramsArray;
-    }
-
-    /**
-     * Check if the given languages are supported
-     *
-     * @param string $sourceLanguage
-     * @param string $destinationLanguage
-     *
-     * @return boolean
-     *
-     * @throws DeepLException
-     */
-    protected function checkLanguages($sourceLanguage, $destinationLanguage)
-    {
-        $sourceLanguage = strtoupper($sourceLanguage);
-
-        if (false === in_array($sourceLanguage, $this->sourceLanguages)) {
-            throw new DeepLException(
-                sprintf('The language "%s" is not supported as source language.', $sourceLanguage)
-            );
-        }
-
-        $destinationLanguage = strtoupper($destinationLanguage);
-
-        if (false === in_array($destinationLanguage, $this->destinationLanguages)) {
-            throw new DeepLException(
-                sprintf('The language "%s" is not supported as destination language.', $destinationLanguage)
-            );
-        }
-
-        return true;
     }
 
     /**

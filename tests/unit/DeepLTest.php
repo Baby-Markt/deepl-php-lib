@@ -15,21 +15,6 @@ use ReflectionClass;
 class DeepLTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * Test checkLanguages()
-     */
-    public function testCheckLanguages()
-    {
-        $authKey = '123456';
-        $deepl   = new DeepL($authKey);
-
-        $checkLanguages = self::getMethod('\BabyMarkt\DeepL\DeepL', 'checkLanguages');
-
-        $return = $checkLanguages->invokeArgs($deepl, array('de', 'en'));
-
-        $this->assertTrue($return);
-    }
-
-    /**
      * Get protected method
      *
      * @param $className
@@ -46,36 +31,6 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         return $method;
-    }
-
-    /**
-     * Test checkLanguages() with exception for source language
-     */
-    public function testCheckLanguagesSourceLanguageException()
-    {
-        $authKey = '123456';
-        $deepl   = new DeepL($authKey);
-
-        $checkLanguages = self::getMethod('\BabyMarkt\DeepL\DeepL', 'checkLanguages');
-
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
-
-        $checkLanguages->invokeArgs($deepl, array('fo', 'en'));
-    }
-
-    /**
-     * Test checkLanguages() with exception for destination language
-     */
-    public function testCheckLanguagesDestinationLanguageException()
-    {
-        $authKey = '123456';
-        $deepl   = new DeepL($authKey);
-
-        $checkLanguages = self::getMethod('\BabyMarkt\DeepL\DeepL', 'checkLanguages');
-
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
-
-        $checkLanguages->invokeArgs($deepl, array('de', 'fo'));
     }
 
     /**
