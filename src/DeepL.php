@@ -188,7 +188,7 @@ class DeepL
      * @return array
      * @throws DeepLException
      *
-     * @SuppressWarnings(PHPMD.UnusedParameters)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function translate(
         $text,
@@ -206,14 +206,20 @@ class DeepL
         if (is_array($tagHandling)) {
             throw new \InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
         }
-        $paramsArray = array();
-        $reflection  = new ReflectionMethod('Babymarkt\DeepL\DeepL', 'translate');
+        $paramsArray = array(
+            'text'                => $text,
+            'source_lang'         => $sourceLang,
+            'target_lang'         => $targetLang,
+            'splitting_tags'      => $splittingTags,
+            'non_splitting_tags'  => $nonSplittingTags,
+            'ignore_tags'         => $ignoreTags,
+            'tag_handling'        => $tagHandling,
+            'formality'           => $formality,
+            'split_sentences'     => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'outline_detection'   => $outlineDetection,
+        );
 
-        foreach ($reflection->getParameters() as $param) {
-            $paramName             = $param->name;
-            $paraKey               = $this->camelToSnake($paramName);
-            $paramsArray[$paraKey] = $$paramName;
-        }
         $paramsArray = $this->removeEmptyParams($paramsArray);
         $url         = $this->buildBaseUrl();
         $body        = $this->buildQuery($paramsArray);
@@ -282,30 +288,5 @@ class DeepL
         }
 
         return $body;
-    }
-
-
-    /**
-     * @param string $subject
-     *
-     * @return string
-     */
-    private function camelToSnake($subject)
-    {
-        if (preg_match('/[A-Z]/', $subject) === 0) {
-            return $subject;
-        }
-        $pattern     = '/([a-z])([A-Z])/';
-        $snakeString = strtolower(
-            preg_replace_callback(
-                $pattern,
-                function ($match) {
-                    return $match[1]."_".strtolower($match[2]);
-                },
-                $subject
-            )
-        );
-
-        return $snakeString;
     }
 }
