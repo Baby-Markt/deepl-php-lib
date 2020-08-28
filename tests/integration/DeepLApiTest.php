@@ -214,7 +214,6 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             'xml',             //$tagHandling
             array('html','html5','html6'), //$ignoreTags
             'more',                         //$formality
-            'translate',                   //$resource
             'nonewlines',                  //$splitSentences
             1,                             //$preserveFormatting
             array('href','href2'),         //$nonSplittingTags
@@ -309,7 +308,6 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             'xml',             //$tagHandling
             array('strong'), //$ignoreTags
             'less',                         //$formality
-            'translate',
             1,
             0,
             array('br'),
