@@ -72,7 +72,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -91,7 +91,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -131,7 +131,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             'xml'
         );
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -156,7 +156,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             array('strong')
         );
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -221,7 +221,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             array('p','br')                //$splittingTags
         );
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -246,7 +246,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
             'less'                         //$formality
         );
 
-        $this->assertEquals($expectedText, $translatedText);
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**

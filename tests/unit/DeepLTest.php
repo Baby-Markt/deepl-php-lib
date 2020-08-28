@@ -123,7 +123,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * Test buildQuery with empty Arguemtns
+     * Test buildQuery with empty Arguments
      */
     public function testBuildQueryWithNulledArguments()
     {
@@ -480,5 +480,19 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
         $this->assertEquals($expectation, $return);
+    }
+
+    /**
+     * Test behaviour of translate() when tagHandling is an array
+     */
+    public function testTranslateExceptionTagHandling()
+    {
+        $authKey    = '123456';
+        $germanText = 'Hallo Welt';
+        $deepl      = new DeepL($authKey);
+
+        $this->setExpectedException('InvalidArgumentException');
+
+        $deepl->translate($germanText, 'de', 'en', array('xml'));
     }
 }

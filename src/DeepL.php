@@ -228,7 +228,7 @@ class DeepL
      * @param null            $outlineDetection
      * @param array|null      $splittingTags
      *
-     * @return mixed
+     * @return array
      * @throws DeepLException
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -246,6 +246,10 @@ class DeepL
         $outlineDetection = null,
         array $splittingTags = null
     ) {
+        if (is_array($tagHandling)) {
+            throw new \InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
+        }
+
         $paramsArray = array(
             'text'                => $text,
             'source_lang'         => $sourceLanguage,
@@ -269,13 +273,6 @@ class DeepL
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
-        $translationsCount = count($translationsArray['translations']);
-
-        if ($translationsCount === 0) {
-            throw new DeepLException('No translations found.');
-        } elseif ($translationsCount === 1) {
-            return $translationsArray['translations'][0]['text'];
-        }
 
         return $translationsArray['translations'];
     }
