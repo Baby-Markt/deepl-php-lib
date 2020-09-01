@@ -334,7 +334,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test translate() with unsupported sourceLanguage
+     * Test translate() with unsupported targetLanguage
      */
     public function testTranslateWithNotSupportedDestinationLanguage()
     {
