@@ -89,83 +89,10 @@ class DeepL
      */
     public function usage()
     {
-        $body  = '';
         $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url, $body);
+        $usage = $this->request($url);
 
         return $usage;
-    }
-
-    /**
-     * Creates the Base-Url which all of the 3 API-resources have in common.
-     *
-     * @param string $resource
-     *
-     * @return string
-     */
-    protected function buildBaseUrl($resource = 'translate')
-    {
-        $url = sprintf(
-            self::API_URL_BASE,
-            self::API_URL_SCHEMA,
-            $this->host,
-            $this->apiVersion,
-            $resource,
-            $this->authKey
-        );
-
-        return $url;
-    }
-
-    /**
-     * Make a request to the given URL
-     *
-     * @param string $url
-     * @param string $body
-     *
-     * @return array
-     *
-     * @throws DeepLException
-     */
-    protected function request($url, $body)
-    {
-        curl_setopt($this->curl, CURLOPT_POST, true);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-
-        $response = curl_exec($this->curl);
-
-        if (curl_errno($this->curl)) {
-            throw new DeepLException('There was a cURL Request Error.');
-        }
-        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-        $responseArray = json_decode($response, true);
-
-        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
-            throw new DeepLException($responseArray['message'], $httpCode);
-        }
-
-        if (false === is_array($responseArray)) {
-            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
-        }
-
-        return $responseArray;
-    }
-
-    /**
-     * Call languages-Endpoint and return Json-response as an Array
-     *
-     * @return array
-     * @throws DeepLException
-     */
-    public function languages()
-    {
-        $body      = '';
-        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
-        $languages = $this->request($url, $body);
-
-        return $languages;
     }
 
     /**
@@ -229,32 +156,38 @@ class DeepL
     }
 
     /**
-     * @param array $paramsArray
+     * Call languages-Endpoint and return Json-response as an Array
      *
      * @return array
+     * @throws DeepLException
      */
-    private function removeEmptyParams($paramsArray)
+    public function languages()
     {
+        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $languages = $this->request($url);
 
-        foreach ($paramsArray as $key => $value) {
-            if (true === empty($value)) {
-                unset($paramsArray[$key]);
-            }
-            // Special Workaround for outline_detection which will be unset above
-            // DeepL assumes outline_detection=1 if it is not send
-            // in order to deactivate it, we need to send outline_detection=0 to the api
-            if ('outline_detection' === $key) {
-                if (1 === $value) {
-                    unset($paramsArray[$key]);
-                }
+        return $languages;
+    }
 
-                if (0 === $value) {
-                    $paramsArray[$key] = 0;
-                }
-            }
-        }
+    /**
+     * Creates the Base-Url which all of the 3 API-resources have in common.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    protected function buildBaseUrl($resource = 'translate')
+    {
+        $url = sprintf(
+            self::API_URL_BASE,
+            self::API_URL_SCHEMA,
+            $this->host,
+            $this->apiVersion,
+            $resource,
+            $this->authKey
+        );
 
-        return $paramsArray;
+        return $url;
     }
 
     /**
@@ -286,5 +219,73 @@ class DeepL
         }
 
         return $body;
+    }
+
+
+
+
+    /**
+     * Make a request to the given URL
+     *
+     * @param string $url
+     * @param string $body
+     *
+     * @return array
+     *
+     * @throws DeepLException
+     */
+    protected function request($url, $body = '')
+    {
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+        $response = curl_exec($this->curl);
+
+        if (curl_errno($this->curl)) {
+            throw new DeepLException('There was a cURL Request Error.');
+        }
+        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+        $responseArray = json_decode($response, true);
+
+        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
+            throw new DeepLException($responseArray['message'], $httpCode);
+        }
+
+        if (false === is_array($responseArray)) {
+            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
+        }
+
+        return $responseArray;
+    }
+
+    /**
+     * @param array $paramsArray
+     *
+     * @return array
+     */
+    private function removeEmptyParams($paramsArray)
+    {
+
+        foreach ($paramsArray as $key => $value) {
+            if (true === empty($value)) {
+                unset($paramsArray[$key]);
+            }
+            // Special Workaround for outline_detection which will be unset above
+            // DeepL assumes outline_detection=1 if it is not send
+            // in order to deactivate it, we need to send outline_detection=0 to the api
+            if ('outline_detection' === $key) {
+                if (1 === $value) {
+                    unset($paramsArray[$key]);
+                }
+
+                if (0 === $value) {
+                    $paramsArray[$key] = 0;
+                }
+            }
+        }
+
+        return $paramsArray;
     }
 }
