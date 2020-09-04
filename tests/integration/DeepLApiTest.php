@@ -194,6 +194,58 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test languages() can return the source-languages
+     */
+    public function testLanguagesSource()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $response = $deepl->languages('source');
+
+        foreach ($response as $language) {
+            $this->assertArrayHasKey('language', $language);
+            $this->assertArrayHasKey('name', $language);
+        }
+    }
+
+    /**
+     * Test languages()  can return the targe-languages
+     */
+    public function testLanguagesTarget()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $response = $deepl->languages('target');
+
+        foreach ($response as $language) {
+            $this->assertArrayHasKey('language', $language);
+            $this->assertArrayHasKey('name', $language);
+        }
+    }
+
+    /**
+     * Test languages() will fail with wrong Parameter
+     */
+    public function testLanguagesFail()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+
+        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+
+        $deepl->languages('fail');
+    }
+
+    /**
      * Test translate() with all Params
      */
     public function testTranslateWithAllParams()

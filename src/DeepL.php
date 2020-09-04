@@ -82,17 +82,20 @@ class DeepL
     }
 
     /**
-     * Calls the usage-Endpoint and return Json-response as an array
+     * Call languages-Endpoint and return Json-response as an Array
+     *
+     * @param string $type
      *
      * @return array
      * @throws DeepLException
      */
-    public function usage()
+    public function languages($type = null)
     {
-        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url);
+        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $body      = $this->buildQuery(array('type' => $type));
+        $languages = $this->request($url, $body);
 
-        return $usage;
+        return $languages;
     }
 
     /**
@@ -156,18 +159,19 @@ class DeepL
     }
 
     /**
-     * Call languages-Endpoint and return Json-response as an Array
+     * Calls the usage-Endpoint and return Json-response as an array
      *
      * @return array
      * @throws DeepLException
      */
-    public function languages()
+    public function usage()
     {
-        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
-        $languages = $this->request($url);
+        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
+        $usage = $this->request($url);
 
-        return $languages;
+        return $usage;
     }
+
 
     /**
      * Creates the Base-Url which all of the 3 API-resources have in common.
@@ -197,7 +201,7 @@ class DeepL
      */
     protected function buildQuery($paramsArray)
     {
-        if (true === is_array($paramsArray['text'])) {
+        if (isset($paramsArray['text']) && true === is_array($paramsArray['text'])) {
             $text = $paramsArray['text'];
             unset($paramsArray['text']);
             $textString = '';

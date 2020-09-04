@@ -51,20 +51,26 @@ foreach ($translations as $translation) {
 }
 ```
 ### Supported languages
-* `de` - German
-* `en` - English
-* `fr` - French
-* `it` - Italian
-* `ja` - Japanese
-* `es` - Spanish
-* `nl` - Dutch
-* `pl` - Polish
-* `pt` - Portuguese
-* `pt-pt` - Portuguese variant
-* `pt-br` - Portuguese variant
-* `ru` - Russian
-* `zh` - Chinese
+In Version 2 we removed the internal List of supported Languages.
+Instead, you can now get an array with the supported Languages directly form DeepL:
 
+```php
+$languagesArray = $deepl->languages();
+
+foreach ($languagesArray as $language) {
+    echo $language['name'];
+    echo $language['language'];
+}
+```
+
+### Monitoring usage
+You can now check ow much you translate, as well as the limits set.
+```php
+$usageArray = $deepl->usage();
+
+echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['character_limit'].' in in the current billing period.';
+ 
+```
 ## Testing
 
 Run PHP_CodeSniffer Tests:
@@ -93,7 +99,7 @@ composer test:all
 
 ## Credits
 
-- [Arkadius Jonczek][link-author]
+- [babymarkt.de GmbH][link-author]
 - [All Contributors][link-contributors]
 
 ## License
@@ -112,5 +118,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-scrutinizer]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib
 [link-downloads]: https://packagist.org/packages/babymarkt/deepl-php-lib
-[link-author]: https://github.com/arkadiusjonczek
+[link-author]: https://github.com/Baby-Markt
 [link-contributors]: ../../contributors
