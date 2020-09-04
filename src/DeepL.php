@@ -100,6 +100,7 @@ class DeepL
 
     /**
      * Translate the text string or array from source to destination language
+     * For detailed info on Parameters see README.md
      *
      * @param string|string[] $text
      * @param string          $sourceLang
