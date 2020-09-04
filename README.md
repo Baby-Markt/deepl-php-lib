@@ -13,6 +13,8 @@ Simple PHP Library for DeepL API. You can translate one or multiple text strings
 
 [Official DeepL API][link-deepl]
 
+[CHANGELOG](CHANGELOG.md)
+
 ## Install
 
 Use composer if you want to use this library in your project.
