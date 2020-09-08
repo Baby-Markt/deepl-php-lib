@@ -9,7 +9,11 @@
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
-🇬🇧🇩🇪🇫🇷🇪🇸🇵🇹🇮🇹🇷🇺🇯🇵🇨🇳🇵🇱🇳🇱🇸🇪🇩🇰🇫🇮🇬🇷🇨🇿🇷🇴🇭🇺🇸🇰🇧🇬🇸🇮🇱🇹🇱🇻🇪🇪🇲🇹
+🇩🇪🇬🇧🇺🇸🇪🇸🇲🇽🇫🇷🇮🇹🇯🇵🇳🇱🇵🇱🇵🇹🇧🇷🇷🇺🇨🇳
+
+[Official DeepL API][link-deepl]
+
+[CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -28,11 +32,12 @@ $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey);
 ```
 
+### Translate
 Translate one Text:
 
 ```php
 $translatedText = $deepl->translate('Hallo Welt', 'de', 'en');
-echo $translatedText;
+echo $translatedText[0]['text'].PHP_EOL;
 ```
 
 Translate multiple Texts:
@@ -47,24 +52,60 @@ $text = array(
 $translations = $deepl->translate($text, 'de', 'en');
 
 foreach ($translations as $translation) {
-    echo $translation['text'];
+    echo $translation['text'].PHP_EOL;
 }
 ```
-### Supported languages
-* `de` - German
-* `en` - English
-* `fr` - French
-* `it` - Italian
-* `ja` - Japanese
-* `es` - Spanish
-* `nl` - Dutch
-* `pl` - Polish
-* `pt` - Portuguese
-* `pt-pt` - Portuguese variant
-* `pt-br` - Portuguese variant
-* `ru` - Russian
-* `zh` - Chinese
 
+| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $text               | Text to be translated. Only UTF8-encoded plain text is supported. The parameter may be specified as an Array and translations are returned in the same order as they are requested. Each of the array values may contain multiple sentences. Up to 50 texts can be sent for translation in one request.                                                                                                            |
+| $sourceLang         | Language of the text to be translated. <br>default: de                                                                                                                                                                                                                                                                                                                                                                                   |
+| $targetLang         | The language into which the text should be translated. <br> default: en                                                                                                                                                                                                                                                                                                                                                                    |
+| $tagHandling        | Sets which kind of tags should be handled. Options currently available: "xml"                                                                                                                                                                                                                                                                                                                                             |
+| $ignoreTags         | Array of XML tags that indicate text not to be translated. <br> default: null                                                                                                                                                                                                                                                                                                                                                  |
+| $formality          | Sets whether the translated text should lean towards formal or informal language. This feature currently works for all target languages except "EN" (English), "EN-GB" (British English), "EN-US" (American English), "ES" (Spanish), "JA" (Japanese) and "ZH" (Chinese).<br><br>Possible options are:<br>"default" (default)<br>"more" - for a more formal language<br>"less" - for a more informal language |
+| $splitSentences     | Array of XML tags which always cause splits  <br> default: null                                                                                                                                                                                                                                                                                                                                                                |
+| $preserveFormatting | Sets whether the translation engine should respect the original formatting, even if it would usually correct some aspects. Possible values are:<br>"0" (default)<br>"1"<br>The formatting aspects affected by this setting include:<br>Punctuation at the beginning and end of the sentence<br>Upper/lower case at the beginning of the sentence                                                                          |
+| $nonSplittingTags   | Comma-separated list of XML tags which never split sentences.   <br> default: null                                                                                                                                                                                                                                                                                                                                                            |
+| $outlineDetection   | See: https://www.deepl.com/docs-api/handling-xml/outline-detection/ <br> default: 1                                                                                                                                                                                                                                                                                                                                                     |
+| $splittingTags      | Array of XML tags which always cause splits. <br> default: null                                                                                                                                                                                                                                                                                                                                                              |
+
+### Supported languages
+In Version 2 we removed the internal List of supported Languages.
+Instead, you can now get an array with the supported Languages directly form DeepL:
+
+```php
+$languagesArray = $deepl->languages();
+
+foreach ($languagesArray as $language) {
+    echo 'Name: '.$language['name'].' Api-Shorthand: '.$language['language'].PHP_EOL;
+}
+```
+You can check for the supported Source-Languages:
+```php
+$sourceLanguagesArray = $deepl->languages('source');
+
+foreach ($sourceLanguagesArray as $srouceLanguage) {
+    echo 'Name: '.$srouceLanguage['name'].' Api-shorthand: '.$srouceLanguage['language'].PHP_EOL;
+}
+```
+
+Check for the supported Target-Languages:
+```php
+$targetLanguagesArray = $deepl->languages('target');
+
+foreach ($targetLanguagesArray as $targetLanguage) {
+    echo 'Name: '.$targetLanguage['name'].' Api-Shorthand: '.$targetLanguage['language'].PHP_EOL;
+}
+```
+### Monitoring usage
+You can now check ow much you translate, as well as the limit:
+```php
+$usageArray = $deepl->usage();
+
+echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['character_limit'].' in the current billing period.'.PHP_EOL;
+ 
+```
 ## Testing
 
 Run PHP_CodeSniffer Tests:
@@ -93,7 +134,7 @@ composer test:all
 
 ## Credits
 
-- [Arkadius Jonczek][link-author]
+- [babymarkt.de GmbH][link-author]
 - [All Contributors][link-contributors]
 
 ## License
@@ -112,5 +153,6 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-scrutinizer]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib
 [link-downloads]: https://packagist.org/packages/babymarkt/deepl-php-lib
-[link-author]: https://github.com/arkadiusjonczek
+[link-author]: https://github.com/Baby-Markt
 [link-contributors]: ../../contributors
+[link-deepl]: https://www.deepl.com/docs-api/introduction/

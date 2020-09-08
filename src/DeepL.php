@@ -17,11 +17,6 @@ class DeepL
     const API_URL_BASE = '%s://%s/v%s/%s?auth_key=%s';
 
     /**
-     * API URL: translate
-     */
-    const API_URL_RESOURCE_TRANSLATE = 'translate';
-
-    /**
      * API URL: usage
      */
     const API_URL_RESOURCE_USAGE = 'usage';
@@ -30,101 +25,6 @@ class DeepL
      * API URL: languages
      */
     const API_URL_RESOURCE_LANGUAGES = 'languages';
-
-    /**
-     * API URL: Parameter text
-     */
-    const API_URL_TEXT = 'text=%s';
-
-    /**
-     * API URL: Parameter source_lang
-     */
-    const API_URL_SOURCE_LANG = 'source_lang=%s';
-
-    /**
-     * API URL: Parameter target_lang
-     */
-    const API_URL_DESTINATION_LANG = 'target_lang=%s';
-
-    /**
-     * API URL: Parameter tag_handling
-     */
-    const API_URL_TAG_HANDLING = 'tag_handling=%s';
-
-    /**
-     * API URL: Parameter ignore_tags
-     */
-    const API_URL_IGNORE_TAGS = 'ignore_tags=%s';
-
-    /**
-     * API URL: Parameter formality
-     */
-    const API_URL_FORMALITY = 'formality=%s';
-
-    /**
-     * API URL: Parameter split_sentences
-     */
-    const API_URL_SPLIT_SENTENCES = 'split_sentences=%s';
-
-    /**
-     * API URL: Parameter preserve_formatting
-     */
-    const API_URL_PRESERVE_FORMATTING = 'preserve_formatting=%s';
-
-    /**
-     * API URL: Parameter non_splitting_tags
-     */
-    const API_URL_NON_SPLITTING_TAGS = 'non_splitting_tags=%s';
-
-    /**
-     * API URL: Parameter outline_detection
-     */
-    const API_URL_OUTLINE_DETECTION = 'outline_detection=%s';
-
-    /**
-     * API URL: Parameter splitting_tags
-     */
-    const API_URL_SPLITTING_TAGS = 'splitting_tags=%s';
-
-    /**
-     * Supported translation source languages
-     *
-     * @var array
-     */
-    protected $sourceLanguages = array(
-        'EN',
-        'DE',
-        'FR',
-        'ES',
-        'PT',
-        'IT',
-        'NL',
-        'PL',
-        'RU',
-        'JA',
-        'ZH',
-    );
-
-    /**
-     * Supported translation destination languages
-     *
-     * @var array
-     */
-    protected $destinationLanguages = array(
-        'EN',
-        'DE',
-        'FR',
-        'ES',
-        'PT',
-        'PT-PT',
-        'PT-BR',
-        'IT',
-        'NL',
-        'PL',
-        'RU',
-        'JA',
-        'ZH',
-    );
 
     /**
      * DeepL API Version (v2 is default since 2018)
@@ -182,185 +82,100 @@ class DeepL
     }
 
     /**
+     * Call languages-Endpoint and return Json-response as an Array
+     *
+     * @param string $type
+     *
+     * @return array
+     * @throws DeepLException
+     */
+    public function languages($type = null)
+    {
+        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $body      = $this->buildQuery(array('type' => $type));
+        $languages = $this->request($url, $body);
+
+        return $languages;
+    }
+
+    /**
      * Translate the text string or array from source to destination language
+     * For detailed info on Parameters see README.md
      *
      * @param string|string[] $text
-     * @param string          $sourceLanguage
-     * @param string          $destinationLanguage
+     * @param string          $sourceLang
+     * @param string          $targetLang
      * @param string          $tagHandling
      * @param array|null      $ignoreTags
      * @param string          $formality
-     * @param string          $resource
      * @param null            $splitSentences
      * @param null            $preserveFormatting
      * @param array|null      $nonSplittingTags
      * @param null            $outlineDetection
      * @param array|null      $splittingTags
      *
-     * @return mixed
+     * @return array
      * @throws DeepLException
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function translate(
         $text,
-        $sourceLanguage = 'de',
-        $destinationLanguage = 'en',
+        $sourceLang = 'de',
+        $targetLang = 'en',
         $tagHandling = null,
         array $ignoreTags = null,
-        $formality = "default",
-        $resource = self::API_URL_RESOURCE_TRANSLATE,
+        $formality = 'default',
         $splitSentences = null,
         $preserveFormatting = null,
         array $nonSplittingTags = null,
         $outlineDetection = null,
         array $splittingTags = null
     ) {
-        // make sure we only accept supported languages
-        $this->checkLanguages($sourceLanguage, $destinationLanguage);
-
-        // build the DeepL API request url
-        $url = $this->buildUrl(
-            $sourceLanguage,
-            $destinationLanguage,
-            $tagHandling,
-            $ignoreTags,
-            $formality,
-            $resource,
-            $splitSentences,
-            $preserveFormatting,
-            $nonSplittingTags,
-            $outlineDetection,
-            $splittingTags
+        if (is_array($tagHandling)) {
+            throw new \InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
+        }
+        $paramsArray = array(
+            'text'                => $text,
+            'source_lang'         => $sourceLang,
+            'target_lang'         => $targetLang,
+            'splitting_tags'      => $splittingTags,
+            'non_splitting_tags'  => $nonSplittingTags,
+            'ignore_tags'         => $ignoreTags,
+            'tag_handling'        => $tagHandling,
+            'formality'           => $formality,
+            'split_sentences'     => $splitSentences,
+            'preserve_formatting' => $preserveFormatting,
+            'outline_detection'   => $outlineDetection,
         );
 
-        $body = $this->buildBody($text);
+        $paramsArray = $this->removeEmptyParams($paramsArray);
+        $url         = $this->buildBaseUrl();
+        $body        = $this->buildQuery($paramsArray);
 
         // request the DeepL API
         $translationsArray = $this->request($url, $body);
-        $translationsCount = count($translationsArray['translations']);
-
-        if ($translationsCount === 0) {
-            throw new DeepLException('No translations found.');
-        } elseif ($translationsCount === 1) {
-            return $translationsArray['translations'][0]['text'];
-        }
 
         return $translationsArray['translations'];
     }
 
     /**
-     * Check if the given languages are supported
+     * Calls the usage-Endpoint and return Json-response as an array
      *
-     * @param string $sourceLanguage
-     * @param string $destinationLanguage
-     *
-     * @return boolean
-     *
+     * @return array
      * @throws DeepLException
      */
-    protected function checkLanguages($sourceLanguage, $destinationLanguage)
+    public function usage()
     {
-        $sourceLanguage = strtoupper($sourceLanguage);
+        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
+        $usage = $this->request($url);
 
-        if (false === in_array($sourceLanguage, $this->sourceLanguages)) {
-            throw new DeepLException(
-                sprintf('The language "%s" is not supported as source language.', $sourceLanguage)
-            );
-        }
-
-        $destinationLanguage = strtoupper($destinationLanguage);
-
-        if (false === in_array($destinationLanguage, $this->destinationLanguages)) {
-            throw new DeepLException(
-                sprintf('The language "%s" is not supported as destination language.', $destinationLanguage)
-            );
-        }
-
-        return true;
+        return $usage;
     }
 
-    /**
-     * Build the URL for the DeepL API request
-     *
-     * @param string     $sourceLanguage
-     * @param string     $destinationLanguage
-     * @param string     $tagHandling
-     * @param array|null $ignoreTags
-     * @param string     $formality
-     * @param string     $resource
-     * @param null       $splitSentences
-     * @param null       $preserveFormatting
-     * @param array|null $nonSplittingTags
-     * @param null       $outlineDetection
-     * @param array|null $splittingTags
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     */
-    protected function buildUrl(
-        $sourceLanguage = null,
-        $destinationLanguage = null,
-        $tagHandling = null,
-        array $ignoreTags = null,
-        $formality = 'default',
-        $resource = self::API_URL_RESOURCE_TRANSLATE,
-        $splitSentences = null,
-        $preserveFormatting = null,
-        array $nonSplittingTags = null,
-        $outlineDetection = 1,
-        array $splittingTags = null
-    ) {
-        $url = $this->buildBaseUrl($resource);
-
-        if (false === empty($sourceLanguage)) {
-            $url .= '&'.sprintf(self::API_URL_SOURCE_LANG, strtolower($sourceLanguage));
-        }
-
-        if (false === empty($destinationLanguage)) {
-            $url .= '&'.sprintf(self::API_URL_DESTINATION_LANG, strtolower($destinationLanguage));
-        }
-
-        if (false === empty($tagHandling)) {
-            $url .= '&'.sprintf(self::API_URL_TAG_HANDLING, $tagHandling);
-        }
-
-        if (false === empty($ignoreTags)) {
-            $url .= '&'.sprintf(self::API_URL_IGNORE_TAGS, urlencode(implode(',', $ignoreTags)));
-        }
-
-        if (false === empty($formality)) {
-            $url .= '&'.sprintf(self::API_URL_FORMALITY, $formality);
-        }
-
-        if (false === empty($splitSentences)) {
-            $url .= '&'.sprintf(self::API_URL_SPLIT_SENTENCES, $splitSentences);
-        }
-
-        if (false === empty($preserveFormatting)) {
-            $url .= '&'.sprintf(self::API_URL_PRESERVE_FORMATTING, $preserveFormatting);
-        }
-
-        if (false === empty($nonSplittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_NON_SPLITTING_TAGS, urlencode(implode(',', $nonSplittingTags)));
-        }
-
-        if (0 === $outlineDetection) {
-            $url .= '&'.sprintf(self::API_URL_OUTLINE_DETECTION, $outlineDetection);
-        }
-
-        if (false === empty($splittingTags)) {
-            $url .= '&'.sprintf(self::API_URL_SPLITTING_TAGS, urlencode(implode(',', $splittingTags)));
-        }
-
-        return $url;
-    }
 
     /**
-     * Creates the Base-Url which all of the 3 API-recourses have in common.
+     * Creates the Base-Url which all of the 3 API-resources have in common.
      *
      * @param string $resource
      *
@@ -381,42 +196,50 @@ class DeepL
     }
 
     /**
-     * Build the body for the DeepL API request
-     *
-     * @param string|string[] $text
+     * @param array $paramsArray
      *
      * @return string
      */
-    protected function buildBody($text)
+    protected function buildQuery($paramsArray)
     {
-        $body  = '';
-        $first = true;
-
-        if (!is_array($text)) {
-            $text = (array)$text;
+        if (isset($paramsArray['text']) && true === is_array($paramsArray['text'])) {
+            $text = $paramsArray['text'];
+            unset($paramsArray['text']);
+            $textString = '';
+            foreach ($text as $textElement) {
+                $textString .= '&text='.rawurlencode($textElement);
+            }
         }
 
-        foreach ($text as $textElement) {
-            $body .= ($first ? '' : '&').sprintf(self::API_URL_TEXT, rawurlencode($textElement));
-
-            if ($first) {
-                $first = false;
+        foreach ($paramsArray as $key => $value) {
+            if (true === is_array($value)) {
+                $paramsArray[$key] = implode(',', $value);
             }
+        }
+
+        $body = http_build_query($paramsArray, null, '&');
+
+        if (isset($textString)) {
+            $body = $textString.'&'.$body;
         }
 
         return $body;
     }
 
+
+
+
     /**
      * Make a request to the given URL
      *
      * @param string $url
+     * @param string $body
      *
      * @return array
      *
      * @throws DeepLException
      */
-    protected function request($url, $body)
+    protected function request($url, $body = '')
     {
         curl_setopt($this->curl, CURLOPT_POST, true);
         curl_setopt($this->curl, CURLOPT_URL, $url);
@@ -443,32 +266,31 @@ class DeepL
     }
 
     /**
-     * Calls the usage-Endpoint and return Json-response as an array
+     * @param array $paramsArray
      *
      * @return array
-     * @throws DeepLException
      */
-    public function usage()
+    private function removeEmptyParams($paramsArray)
     {
-        $body  = '';
-        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url, $body);
 
-        return $usage;
-    }
+        foreach ($paramsArray as $key => $value) {
+            if (true === empty($value)) {
+                unset($paramsArray[$key]);
+            }
+            // Special Workaround for outline_detection which will be unset above
+            // DeepL assumes outline_detection=1 if it is not send
+            // in order to deactivate it, we need to send outline_detection=0 to the api
+            if ('outline_detection' === $key) {
+                if (1 === $value) {
+                    unset($paramsArray[$key]);
+                }
 
-    /**
-     * Call languages-Endpoint and return Json-response as an Array
-     *
-     * @return array
-     * @throws DeepLException
-     */
-    public function languages()
-    {
-        $body      = '';
-        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
-        $languages = $this->request($url, $body);
+                if (0 === $value) {
+                    $paramsArray[$key] = 0;
+                }
+            }
+        }
 
-        return $languages;
+        return $paramsArray;
     }
 }
