@@ -14,15 +14,16 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Arkadius Jonczek",
-            "email": "jonczek@babymarkt.de"
+            "name": "Entwicklungsteam babymarkt.de",
+            "email": "entwicklung@babymarkt.de"
         }
     ],
     "require": {
-        "php": ">=5.3 <8.0"
+        "php": ">=5.3 <8.0",
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
-        "php": ">=5.3 <8.0",
         "phpmd/phpmd": "2.4.*",
         "phpunit/phpunit": "^4.8",
         "squizlabs/php_codesniffer": "^2.9"
