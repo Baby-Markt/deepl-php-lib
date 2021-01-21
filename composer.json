@@ -1,7 +1,7 @@
 {
     "name": "babymarkt/deepl-php-lib",
     "type": "library",
-    "description": "DeepL API Client Library supporting PHP >= 5.3",
+    "description": "DeepL API Client Library supporting PHP >= 8.0",
     "keywords": [
       "babymarkt",
       "deepl",
@@ -19,12 +19,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3",
+        "php": ">=8.0",
         "ext-json": "*",
         "ext-curl": "*"
     },
     "require-dev": {
-        "phpmd/phpmd": "2.4.*",
+        "phpmd/phpmd": "^2.9",
         "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "^3.5"
     },

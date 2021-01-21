@@ -3,6 +3,8 @@
 namespace BabyMarkt\DeepL\integration;
 
 use BabyMarkt\DeepL\DeepL;
+use BabyMarkt\DeepL\DeepLException;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
@@ -12,19 +14,19 @@ use ReflectionClass;
  * @package BabyMarkt\DeepL
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DeepLApiTest extends PHPUnit_Framework_TestCase
+class DeepLApiTest extends TestCase
 {
     /**
      * DeepL Auth Key.
      *
      * @var bool|string
      */
-    protected static $authKey = false;
+    protected static bool|string $authKey = false;
 
     /**
      * Setup DeepL Auth Key.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -58,6 +60,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test translate() success with v2 API
+     * @throws DeepLException
      */
     public function testTranslateSuccess()
     {
@@ -77,6 +80,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test translate() success with v1 API
+     * @throws DeepLException
      */
     public function testTranslateV1Success()
     {
@@ -105,7 +109,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL(self::$authKey, 3);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate($germanText);
     }
@@ -240,13 +244,14 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $deepl    = new DeepL(self::$authKey);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->languages('fail');
     }
 
     /**
      * Test translate() with all Params
+     * @throws DeepLException
      */
     public function testTranslateWithAllParams()
     {
@@ -278,6 +283,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test translate() $formality
+     * @throws DeepLException
      */
     public function testTranslateFormality()
     {
@@ -313,7 +319,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
         $deepl        = new DeepL(self::$authKey);
         $englishText  = '<strong>text to do not translate</strong><p>please translate this text</p>';
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate(
             $englishText,
@@ -328,6 +334,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test to Test the Tag-Handling.
+     * @throws DeepLException
      */
     public function testTranslateWithHTML()
     {
@@ -381,7 +388,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $deepl = new DeepL(self::$authKey);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
         $deepl->translate('some txt', 'dk', 'de');
     }
 
@@ -396,7 +403,7 @@ class DeepLApiTest extends PHPUnit_Framework_TestCase
 
         $deepl = new DeepL(self::$authKey);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
         $deepl->translate('some txt', 'en', 'dk');
     }
 }
