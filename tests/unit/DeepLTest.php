@@ -3,6 +3,7 @@
 namespace BabyMarkt\DeepL\unit;
 
 use BabyMarkt\DeepL\DeepL;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
@@ -12,7 +13,7 @@ use ReflectionClass;
  * @package BabyMarkt\DeepL
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DeepLTest extends PHPUnit_Framework_TestCase
+class DeepLTest extends TestCase
 {
     /**
      * Get protected method
@@ -42,7 +43,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL($authKey);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate($germanText);
     }
@@ -446,7 +447,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL($authKey);
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         $deepl->translate($germanText, 'de', 'en', array('xml'));
     }

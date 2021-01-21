@@ -7,6 +7,8 @@ use BabyMarkt\DeepL\DeepLException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Class DeepLTest
@@ -21,7 +23,7 @@ class DeepLApiTest extends TestCase
      *
      * @var bool|string
      */
-    protected static bool|string $authKey = false;
+    protected static array|bool|string $authKey = false;
 
     /**
      * Setup DeepL Auth Key.
@@ -45,9 +47,9 @@ class DeepLApiTest extends TestCase
      * @param $className
      * @param $methodName
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      *
-     * @return \ReflectionMethod
+     * @return ReflectionMethod
      */
     protected static function getMethod($className, $methodName)
     {

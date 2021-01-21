@@ -28,40 +28,32 @@ class DeepL
 
     /**
      * DeepL API Version (v2 is default since 2018)
-     *
-     * @var integer
      */
-    protected $apiVersion;
+    protected int $apiVersion;
 
     /**
      * DeepL API Auth Key (DeepL Pro access required)
-     *
-     * @var string
      */
-    protected $authKey;
+    protected string $authKey;
 
     /**
      * cURL resource
-     *
-     * @var resource
      */
     protected $curl;
 
     /**
      * Hostname of the API (in most cases api.deepl.com)
-     *
-     * @var string
      */
-    protected $host;
+    protected string $host;
 
     /**
      * DeepL constructor
      *
-     * @param string  $authKey
+     * @param string $authKey
      * @param integer $apiVersion
-     * @param string  $host
+     * @param string $host
      */
-    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com')
+    public function __construct(string $authKey, $apiVersion = 2, $host = 'api.deepl.com')
     {
         $this->authKey    = $authKey;
         $this->apiVersion = $apiVersion;
@@ -84,7 +76,7 @@ class DeepL
     /**
      * Call languages-Endpoint and return Json-response as an Array
      *
-     * @param string $type
+     * @param null $type
      *
      * @return array
      * @throws DeepLException
@@ -93,9 +85,8 @@ class DeepL
     {
         $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
         $body      = $this->buildQuery(array('type' => $type));
-        $languages = $this->request($url, $body);
 
-        return $languages;
+        return $this->request($url, $body);
     }
 
     /**
@@ -103,24 +94,23 @@ class DeepL
      * For detailed info on Parameters see README.md
      *
      * @param string|string[] $text
-     * @param string          $sourceLang
-     * @param string          $targetLang
-     * @param string          $tagHandling
-     * @param array|null      $ignoreTags
-     * @param string          $formality
-     * @param null            $splitSentences
-     * @param null            $preserveFormatting
-     * @param array|null      $nonSplittingTags
-     * @param null            $outlineDetection
-     * @param array|null      $splittingTags
+     * @param string $sourceLang
+     * @param string $targetLang
+     * @param null $tagHandling
+     * @param array|null $ignoreTags
+     * @param string $formality
+     * @param null $splitSentences
+     * @param null $preserveFormatting
+     * @param array|null $nonSplittingTags
+     * @param null $outlineDetection
+     * @param array|null $splittingTags
      *
      * @return array
      * @throws DeepLException
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function translate(
-        $text,
+        string|array $text,
         $sourceLang = 'de',
         $targetLang = 'en',
         $tagHandling = null,
@@ -168,9 +158,8 @@ class DeepL
     public function usage()
     {
         $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url);
 
-        return $usage;
+        return $this->request($url);
     }
 
 
@@ -183,7 +172,7 @@ class DeepL
      */
     protected function buildBaseUrl($resource = 'translate')
     {
-        $url = sprintf(
+        return sprintf(
             self::API_URL_BASE,
             self::API_URL_SCHEMA,
             $this->host,
@@ -191,8 +180,6 @@ class DeepL
             $resource,
             $this->authKey
         );
-
-        return $url;
     }
 
     /**
@@ -200,7 +187,7 @@ class DeepL
      *
      * @return string
      */
-    protected function buildQuery($paramsArray)
+    protected function buildQuery(array $paramsArray)
     {
         if (isset($paramsArray['text']) && true === is_array($paramsArray['text'])) {
             $text = $paramsArray['text'];
@@ -227,8 +214,6 @@ class DeepL
     }
 
 
-
-
     /**
      * Make a request to the given URL
      *
@@ -239,7 +224,7 @@ class DeepL
      *
      * @throws DeepLException
      */
-    protected function request($url, $body = '')
+    protected function request(string $url, $body = '')
     {
         curl_setopt($this->curl, CURLOPT_POST, true);
         curl_setopt($this->curl, CURLOPT_URL, $url);
@@ -270,7 +255,7 @@ class DeepL
      *
      * @return array
      */
-    private function removeEmptyParams($paramsArray)
+    private function removeEmptyParams(array $paramsArray)
     {
 
         foreach ($paramsArray as $key => $value) {
