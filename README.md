@@ -99,12 +99,21 @@ foreach ($targetLanguagesArray as $targetLanguage) {
 }
 ```
 ### Monitoring usage
-You can now check ow much you translate, as well as the limit:
+You can now check how much you translate, as well as the limit:
 ```php
 $usageArray = $deepl->usage();
 
 echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['character_limit'].' in the current billing period.'.PHP_EOL;
  
+```
+
+### Configuring cURL requests
+If you need to use a proxy, you can configure the underlying curl client to use one. You can also specify a timeout to avoid waiting for several minutes if Deepl is unreachable
+```php
+$deepl->setTimeout(10); //give up after 10 seconds
+$deepl->setProxy('http://corporate-proxy.com:3128');
+$deepl->setProxyCredentials('username:password');
+
 ```
 ## Testing
 
