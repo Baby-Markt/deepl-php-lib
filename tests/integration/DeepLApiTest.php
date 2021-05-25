@@ -68,7 +68,7 @@ class DeepLApiTest extends TestCase
         $deepl = new DeepL(self::$authKey);
 
         $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
+        $expectedText   = 'Hello world';
 
         $translatedText = $deepl->translate($germanText);
 
@@ -87,7 +87,7 @@ class DeepLApiTest extends TestCase
         $deepl = new DeepL(self::$authKey, 1);
 
         $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
+        $expectedText   = 'Hello world';
 
         $translatedText = $deepl->translate($germanText);
 
@@ -288,7 +288,7 @@ class DeepLApiTest extends TestCase
         $deepl = new DeepL(self::$authKey);
 
         $englishText    = '<strong>text to do not translate</strong><p>please translate this text</p>';
-        $expectedText   = '<stark>nicht zu übersetzender Text</stark><p>bitte diesen Text übersetzen</p>';
+        $expectedText   = '<strong>Nicht zu übersetzender Text</strong><p>Bitte übersetze diesen Text</p>';
         $translatedText = $deepl->translate(
             $englishText,
             'en',           //$sourceLanguage
@@ -348,7 +348,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Ein weiterer Text neue Zeile <p>dies ist ein Absatz</p>",
+                'text'                     => "Ein weiterer Text<br>neue Zeile <p>dies ist ein Absatz</p></br> ",
             ),
 
         );
