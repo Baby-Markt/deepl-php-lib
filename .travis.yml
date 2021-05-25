@@ -20,6 +20,7 @@ matrix:
 
 env:
   - COMPOSER_ALLOW_XDEBUG=0
+  - XDEBUG_MODE=coverage
 
 cache:
   directories:
