@@ -302,31 +302,6 @@ class DeepLApiTest extends TestCase
     }
 
     /**
-     * Test translate() $formality
-     */
-    public function testTranslateFormalityFail()
-    {
-        if (self::$authKey === false) {
-            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl        = new DeepL(self::$authKey);
-        $englishText  = '<strong>text to do not translate</strong><p>please translate this text</p>';
-
-        $this->expectException('\BabyMarkt\DeepL\DeepLException');
-
-        $deepl->translate(
-            $englishText,
-            'en',           //$sourceLanguage
-            'es',        //$destinationLanguage
-            null,             //$tagHandling
-            null, //$ignoreTags
-            'more'                         //$formality
-        );
-    }
-
-
-    /**
      * Test to Test the Tag-Handling.
      */
     public function testTranslateWithHTML()
