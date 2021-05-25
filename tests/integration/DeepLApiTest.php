@@ -313,7 +313,7 @@ class DeepLApiTest extends TestCase
         $deepl        = new DeepL(self::$authKey);
         $englishText  = '<strong>text to do not translate</strong><p>please translate this text</p>';
 
-        self::setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate(
             $englishText,
