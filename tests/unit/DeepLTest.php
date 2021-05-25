@@ -3,7 +3,7 @@
 namespace BabyMarkt\DeepL\unit;
 
 use BabyMarkt\DeepL\DeepL;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
@@ -12,7 +12,7 @@ use ReflectionClass;
  * @package BabyMarkt\DeepL
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DeepLTest extends PHPUnit_Framework_TestCase
+class DeepLTest extends TestCase
 {
     /**
      * Get protected method
@@ -42,7 +42,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL($authKey);
 
-        $this->setExpectedException('\BabyMarkt\DeepL\DeepLException');
+        $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
         $deepl->translate($germanText);
     }
@@ -58,7 +58,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildUrl    = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
         $return      = $buildUrl->invokeArgs($deepl, array());
 
-        $this->assertEquals($expectedUrl, $return);
+        self::assertEquals($expectedUrl, $return);
     }
 
     /**
@@ -73,7 +73,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildUrl       = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
         $return         = $buildUrl->invokeArgs($deepl, array());
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
 
@@ -103,7 +103,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
     public function testBuildQueryWithMinimalArguments()
@@ -121,7 +121,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
     public function testBuildQueryWithEmptyArguments()
@@ -147,7 +147,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
     public function testBuildQueryWithAllArguments()
@@ -189,7 +189,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return     = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectation, $return);
+        self::assertEquals($expectation, $return);
     }
 
     public function testBuildQueryWithAllArgumentsAndPreserveFormattingZero()
@@ -228,7 +228,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery  = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return      = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectation, $return);
+        self::assertEquals($expectation, $return);
     }
 
     public function testBuildQueryWithAllArgumentsAndMultipleTexts()
@@ -269,7 +269,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildQuery');
         $return     = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectation, $return);
+        self::assertEquals($expectation, $return);
     }
 
     public function testRemoveEmptyParamsWithMinimalArguments()
@@ -297,7 +297,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'removeEmptyParams');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
     public function testRemoveEmptyParamsWithEmptyArguments()
@@ -325,7 +325,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'removeEmptyParams');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectedString, $return);
+        self::assertEquals($expectedString, $return);
     }
 
     public function testRemoveEmptyParamsAllArgumentsAndPreserveFormattingZero()
@@ -361,7 +361,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'removeEmptyParams');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertSame($expectation, $return);
+        self::assertSame($expectation, $return);
     }
 
     public function testRemoveEmptyParamsWithAllArguments()
@@ -399,7 +399,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'removeEmptyParams');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectation, $return);
+        self::assertEquals($expectation, $return);
     }
 
     public function testRemoveEmptyParamsAllArgumentsAndOutlineDetectionOne()
@@ -434,7 +434,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $buildQuery     = self::getMethod('\BabyMarkt\DeepL\DeepL', 'removeEmptyParams');
         $return         = $buildQuery->invokeArgs($deepl, $args);
 
-        $this->assertEquals($expectation, $return);
+        self::assertEquals($expectation, $return);
     }
 
     /**
@@ -446,7 +446,7 @@ class DeepLTest extends PHPUnit_Framework_TestCase
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL($authKey);
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         $deepl->translate($germanText, 'de', 'en', array('xml'));
     }

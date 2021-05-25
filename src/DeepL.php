@@ -2,6 +2,8 @@
 
 namespace BabyMarkt\DeepL;
 
+use InvalidArgumentException;
+
 /**
  * DeepL API client library
  *
@@ -133,7 +135,7 @@ class DeepL
         array $splittingTags = null
     ) {
         if (is_array($tagHandling)) {
-            throw new \InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
+            throw new InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
         }
         $paramsArray = array(
             'text'                => $text,
