@@ -149,7 +149,7 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-downloads]: https://img.shields.io/packagist/dt/babymarkt/deepl-php-lib.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/babymarkt/deepl-php-lib
-[link-travis]: https://travis-ci.org/Baby-Markt/deepl-php-lib
+[link-travis]: https://travis-ci.com/Baby-Markt/deepl-php-lib
 [link-scrutinizer]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/Baby-Markt/deepl-php-lib
 [link-downloads]: https://packagist.org/packages/babymarkt/deepl-php-lib
