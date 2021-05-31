@@ -249,7 +249,7 @@ class DeepL
         $response = curl_exec($this->curl);
 
         if (curl_errno($this->curl)) {
-            throw new DeepLException('There was a cURL Request Error.');
+            throw new DeepLException('There was a cURL Request Error : ' . curl_error($this->curl));
         }
         $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
         $responseArray = json_decode($response, true);
