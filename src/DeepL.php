@@ -55,6 +55,27 @@ class DeepL
     protected $host;
 
     /**
+     * URL of the proxy used to connect to DeepL (if needed)
+     *
+     * @var string|null
+     */
+    protected $proxy = null;
+
+    /**
+     * Credentials for the proxy used to connect to DeepL (username:password)
+     *
+     * @var string|null
+     */
+    protected $proxyCredentials = null;
+
+    /**
+     * Maximum number of seconds the query should take
+     *
+     * @var int|null
+     */
+    protected $timeout = null;
+
+    /**
      * DeepL constructor
      *
      * @param string  $authKey
@@ -96,6 +117,37 @@ class DeepL
         $languages = $this->request($url, $body);
 
         return $languages;
+    }
+
+    /**
+     * Set a proxy to use for querying the DeepL API if needed
+     *
+     * @param string $proxy Proxy URL (e.g 'http://proxy-domain.com:3128')
+     */
+    public function setProxy($proxy)
+    {
+
+        $this->proxy = $proxy;
+    }
+
+    /**
+     * Set the proxy credentials
+     *
+     * @param string $proxyCredentials proxy credentials (using 'username:password' format)
+     */
+    public function setProxyCredentials($proxyCredentials)
+    {
+        $this->proxyCredentials = $proxyCredentials;
+    }
+
+    /**
+     * Set a timeout for queries to the DeepL API
+     *
+     * @param int $timeout Timeout in seconds
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
     }
 
     /**
@@ -245,6 +297,18 @@ class DeepL
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+        if ($this->proxy !== null) {
+            curl_setopt($this->curl, CURLOPT_PROXY, $this->proxy);
+        }
+
+        if ($this->proxyCredentials !== null) {
+            curl_setopt($this->curl, CURLOPT_PROXYAUTH, $this->proxyCredentials);
+        }
+
+        if ($this->timeout !== null) {
+            curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
+        }
 
         $response = curl_exec($this->curl);
 
