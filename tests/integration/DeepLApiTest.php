@@ -22,6 +22,18 @@ class DeepLApiTest extends TestCase
     protected static $authKey = false;
 
     /**
+     * Proxy URL
+     * @var bool|string
+     */
+    private static $proxy;
+
+    /**
+     * Proxy Credentials
+     * @var bool|string
+     */
+    private static $proxyCredentials;
+
+    /**
      * Setup DeepL Auth Key.
      */
     public static function setUpBeforeClass(): void
@@ -29,12 +41,16 @@ class DeepLApiTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
+        $proxy = getenv('HTTP_PROXY');
+        $proxyCredentials = getenv('HTTP_PROXY_CREDENTIALS');
 
         if ($authKey === false) {
             return;
         }
 
         self::$authKey = $authKey;
+        self::$proxy = $proxy;
+        self::$proxyCredentials = $proxyCredentials;
     }
 
     /**
@@ -274,6 +290,49 @@ class DeepLApiTest extends TestCase
         );
 
         self::assertEquals($expectedText, $translatedText[0]['text']);
+    }
+
+    /**
+     * Test translate() with all Params
+     */
+    public function testWithProxy()
+    {
+        if (self::$authKey === false) {
+            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        if (self::$proxy === false) {
+            // The test would succeed with $proxy === false but it wouln't mean anything.
+            $this->markTestSkipped('Proxy is not configured.');
+        }
+
+        $deepl = new DeepL(self::$authKey);
+        $deepl->setProxy(self::$proxy);
+        $deepl->setProxyCredentials(self::$proxyCredentials);
+
+        $englishText  = 'please translate this text';
+        $expectedText = 'Bitte übersetzen Sie diesen Text';
+
+        $translatedText = $deepl->translate($englishText, 'en', 'de');
+
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
+    }
+
+    /**
+     * Test translate() with all Params
+     */
+    public function testCustomTimeout()
+    {
+        $deepl = new DeepL(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
+        $deepl->setTimeout(2);
+
+        $start = time();
+        try {
+            $deepl->translate('some text');
+        } catch (\Exception $e) {
+            $time = time() - $start;
+            $this->assertLessThan(4, $time);
+        }
     }
 
     /**
