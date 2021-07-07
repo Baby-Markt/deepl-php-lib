@@ -9,7 +9,7 @@
 
 Simple PHP Library for DeepL API. You can translate one or multiple text strings (up to 50) per request.
 
-🇩🇪🇬🇧🇺🇸🇪🇸🇲🇽🇫🇷🇮🇹🇯🇵🇳🇱🇵🇱🇵🇹🇧🇷🇷🇺🇨🇳
+🇩🇪🇦🇹🇨🇭🇬🇧🇺🇸🇪🇸🇲🇽🇫🇷🇮🇹🇯🇵🇳🇱🇵🇱🇵🇹🇧🇷🇷🇺🇨🇳🇬🇷🇩🇰🇨🇿🇪🇪🇫🇮🇭🇺🇱🇹🇱🇻🇷🇴🇷🇸🇸🇰🇸🇪
 
 [Official DeepL API][link-deepl]
 
@@ -30,6 +30,12 @@ Create an instance with your auth key:
 ```php
 $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey);
+```
+
+Use the DeepL API Pro:
+```php
+$authKey = '<AUTH KEY>';
+$deepl   = new DeepL($authKey,2,'api.deepl.com');
 ```
 
 ### Translate

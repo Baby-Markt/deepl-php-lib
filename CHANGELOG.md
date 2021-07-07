@@ -6,7 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2020-09-??
+## [3.0.0] - 2021-07-??
+####Major overhaul of the Library with some Breaking changes. Please read before updating!
+### Added
+- Support for PHP 8
+- Support for cURL proxy
+### Changed
+- Moved from travis-ci.org to travis-ci.com
+- Added specific curl_error to message in DeepLException
+- Fix some Tests that where too specific
+- standard api-host from api.deepl.com to api-free.deepl.com
+### Removed
+- Support for PHP < 7.3
+
+## [2.0.1] - 2020-09-29
 ####Major overhaul of the Library with some Breaking changes. Please read before updating!
 ### Added
 - Ability to change the API-Host
