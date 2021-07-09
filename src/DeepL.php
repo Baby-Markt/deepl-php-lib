@@ -84,7 +84,7 @@ class DeepL
      * @param integer $apiVersion
      * @param string  $host
      */
-    public function __construct($authKey, $apiVersion = 2, $host = 'api-free.deepl.com')
+    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com')
     {
         $this->authKey    = $authKey;
         $this->apiVersion = $apiVersion;

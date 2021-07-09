@@ -53,7 +53,7 @@ class DeepLTest extends TestCase
     public function testBuildBaseUrl()
     {
         $authKey     = '123456';
-        $expectedUrl = 'https://api-free.deepl.com/v2/translate?auth_key='.$authKey;
+        $expectedUrl = 'https://api.deepl.com/v2/translate?auth_key='.$authKey;
         $deepl       = new DeepL($authKey);
         $buildUrl    = self::getMethod('\BabyMarkt\DeepL\DeepL', 'buildBaseUrl');
         $return      = $buildUrl->invokeArgs($deepl, array());

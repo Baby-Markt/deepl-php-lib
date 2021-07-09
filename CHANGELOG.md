@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [3.0.0] - 2021-07-??
+## [3.0.1] - 2021-07-09
+### Added
+### Changed
+- revert standard api-host to api.deepl.com 
+### Removed
+
+## [3.0.0] - 2021-07-09
 ####Major overhaul of the Library with some Breaking changes. Please read before updating!
 ### Added
 - Support for PHP 8
