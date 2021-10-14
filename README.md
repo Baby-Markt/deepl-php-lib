@@ -113,6 +113,58 @@ echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['charact
  
 ```
 
+### Glossary
+Create a glossary
+```php
+$glossary = $deepl->createGlossary('MyGlossary', ['Hallo' => 'Hello'], 'de', 'en');
+```
+
+| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $name               | Glossary name
+| $entries            | Array of entries
+| $sourceLanguage     | The source language into which the glossary rule apply                                                                                                                                                                                                                                                                                                                                                                    |
+| $targetLanguage     | The target language into which the glossary rule apply                                                                                                                                                                                                                                                                                                                                             |
+
+Delete a glossary
+```php
+$glossary = $deepl->deleteGlossary($glossaryId);
+```
+
+| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+
+List glossaries
+```php
+$glossaries = $deepl->listGlossaries();
+foreach ($glossaries as $glossary) {
+    var_dump($glossary);
+}
+```
+
+Get glossary meta information: creation date, is glossary ready to use ...
+```php
+$glossaryInformation = $deepl->glossaryInformation($glossaryId);
+var_dump($glossaryInformation);
+```
+
+| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+
+Get glossary entries
+```php
+$entries = $deepl->glossaryEntries($glossaryId);
+foreach ($entries as $sourceLangText => $targetLangText) {
+    echo $sourceLangText .' > '.$targetLangText;
+}
+```
+
+| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+
 ### Configuring cURL requests
 If you need to use a proxy, you can configure the underlying curl client to use one. You can also specify a timeout to avoid waiting for several minutes if Deepl is unreachable
 ```php
