@@ -3,12 +3,8 @@
 namespace BabyMarkt\DeepL\integration;
 
 use BabyMarkt\DeepL\DeepL;
-use BabyMarkt\DeepL\DeepLException;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use ReflectionClass;
-use ReflectionException;
-use ReflectionMethod;
 
 /**
  * Class DeepLTest
@@ -23,7 +19,19 @@ class DeepLApiTest extends TestCase
      *
      * @var bool|string
      */
-    protected static array|bool|string $authKey = false;
+    protected static $authKey = '';
+
+    /**
+     * Proxy URL
+     * @var bool|string
+     */
+    private static $proxy;
+
+    /**
+     * Proxy Credentials
+     * @var bool|string
+     */
+    private static $proxyCredentials;
 
     /**
      * Setup DeepL Auth Key.
@@ -33,12 +41,16 @@ class DeepLApiTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
+        $proxy = getenv('HTTP_PROXY');
+        $proxyCredentials = getenv('HTTP_PROXY_CREDENTIALS');
 
         if ($authKey === false) {
             return;
         }
 
         self::$authKey = $authKey;
+        self::$proxy = $proxy;
+        self::$proxyCredentials = $proxyCredentials;
     }
 
     /**
@@ -47,9 +59,9 @@ class DeepLApiTest extends TestCase
      * @param $className
      * @param $methodName
      *
-     * @throws ReflectionException
+     * @throws \ReflectionException
      *
-     * @return ReflectionMethod
+     * @return \ReflectionMethod
      */
     protected static function getMethod($className, $methodName)
     {
@@ -62,42 +74,40 @@ class DeepLApiTest extends TestCase
 
     /**
      * Test translate() success with v2 API
-     * @throws DeepLException
      */
     public function testTranslateSuccess()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
 
         $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
+        $expectedText   = 'Hello world';
 
         $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
      * Test translate() success with v1 API
-     * @throws DeepLException
      */
     public function testTranslateV1Success()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey, 1);
 
         $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello World';
+        $expectedText   = 'Hello world';
 
         $translatedText = $deepl->translate($germanText);
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -106,7 +116,7 @@ class DeepLApiTest extends TestCase
     public function testTranslateWrongVersion()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
         $germanText = 'Hallo Welt';
         $deepl      = new DeepL(self::$authKey, 3);
@@ -122,7 +132,7 @@ class DeepLApiTest extends TestCase
     public function testTranslateTagHandlingSuccess()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
@@ -137,7 +147,7 @@ class DeepLApiTest extends TestCase
             'xml'
         );
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -146,7 +156,7 @@ class DeepLApiTest extends TestCase
     public function testTranslateIgnoreTagsSuccess()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
@@ -162,7 +172,7 @@ class DeepLApiTest extends TestCase
             array('strong')
         );
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
@@ -171,14 +181,14 @@ class DeepLApiTest extends TestCase
     public function testUsage()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl    = new DeepL(self::$authKey);
         $response = $deepl->usage();
 
-        $this->assertArrayHasKey('character_count', $response);
-        $this->assertArrayHasKey('character_limit', $response);
+        self::assertArrayHasKey('character_count', $response);
+        self::assertArrayHasKey('character_limit', $response);
     }
 
     /**
@@ -187,15 +197,15 @@ class DeepLApiTest extends TestCase
     public function testLanguages()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl    = new DeepL(self::$authKey);
         $response = $deepl->languages();
 
         foreach ($response as $language) {
-            $this->assertArrayHasKey('language', $language);
-            $this->assertArrayHasKey('name', $language);
+            self::assertArrayHasKey('language', $language);
+            self::assertArrayHasKey('name', $language);
         }
     }
 
@@ -205,33 +215,33 @@ class DeepLApiTest extends TestCase
     public function testLanguagesSource()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl    = new DeepL(self::$authKey);
         $response = $deepl->languages('source');
 
         foreach ($response as $language) {
-            $this->assertArrayHasKey('language', $language);
-            $this->assertArrayHasKey('name', $language);
+            self::assertArrayHasKey('language', $language);
+            self::assertArrayHasKey('name', $language);
         }
     }
 
     /**
-     * Test languages()  can return the targe-languages
+     * Test languages()  can return the target-languages
      */
     public function testLanguagesTarget()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl    = new DeepL(self::$authKey);
         $response = $deepl->languages('target');
 
         foreach ($response as $language) {
-            $this->assertArrayHasKey('language', $language);
-            $this->assertArrayHasKey('name', $language);
+            self::assertArrayHasKey('language', $language);
+            self::assertArrayHasKey('name', $language);
         }
     }
 
@@ -241,7 +251,7 @@ class DeepLApiTest extends TestCase
     public function testLanguagesFail()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl    = new DeepL(self::$authKey);
@@ -253,12 +263,11 @@ class DeepLApiTest extends TestCase
 
     /**
      * Test translate() with all Params
-     * @throws DeepLException
      */
     public function testTranslateWithAllParams()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
@@ -280,23 +289,65 @@ class DeepLApiTest extends TestCase
             array('p','br')                //$splittingTags
         );
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
 
     /**
-     * Test translate() $formality
-     * @throws DeepLException
+     * Test translate() with all Params
      */
-    public function testTranslateFormality()
+    public function testWithProxy()
     {
         if (self::$authKey === false) {
             $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
+        if (self::$proxy === false) {
+            // The test would succeed with $proxy === false but it wouln't mean anything.
+            $this->markTestSkipped('Proxy is not configured.');
+        }
+
+        $deepl = new DeepL(self::$authKey);
+        $deepl->setProxy(self::$proxy);
+        $deepl->setProxyCredentials(self::$proxyCredentials);
+
+        $englishText  = 'please translate this text';
+        $expectedText = 'Bitte übersetzen Sie diesen Text';
+
+        $translatedText = $deepl->translate($englishText, 'en', 'de');
+
+        $this->assertEquals($expectedText, $translatedText[0]['text']);
+    }
+
+    /**
+     * Test translate() with all Params
+     */
+    public function testCustomTimeout()
+    {
+        $deepl = new DeepL(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
+        $deepl->setTimeout(2);
+
+        $start = time();
+        try {
+            $deepl->translate('some text');
+        } catch (\Exception $e) {
+            $time = time() - $start;
+            $this->assertLessThan(4, $time);
+        }
+    }
+
+    /**
+     * Test translate() $formality
+     */
+    public function testTranslateFormality()
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
         $deepl = new DeepL(self::$authKey);
 
         $englishText    = '<strong>text to do not translate</strong><p>please translate this text</p>';
-        $expectedText   = '<stark>nicht zu übersetzender Text</stark><p>bitte diesen Text übersetzen</p>';
+        $expectedText   = '<strong>Nicht zu übersetzender Text</strong><p>Bitte übersetze diesen Text</p>';
         $translatedText = $deepl->translate(
             $englishText,
             'en',           //$sourceLanguage
@@ -306,42 +357,16 @@ class DeepLApiTest extends TestCase
             'less'                         //$formality
         );
 
-        $this->assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedText, $translatedText[0]['text']);
     }
-
-    /**
-     * Test translate() $formality
-     */
-    public function testTranslateFormalityFail()
-    {
-        if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
-        }
-
-        $deepl        = new DeepL(self::$authKey);
-        $englishText  = '<strong>text to do not translate</strong><p>please translate this text</p>';
-
-        $this->expectException('\BabyMarkt\DeepL\DeepLException');
-
-        $deepl->translate(
-            $englishText,
-            'en',           //$sourceLanguage
-            'es',        //$destinationLanguage
-            null,             //$tagHandling
-            null, //$ignoreTags
-            'more'                         //$formality
-        );
-    }
-
 
     /**
      * Test to Test the Tag-Handling.
-     * @throws DeepLException
      */
     public function testTranslateWithHTML()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl           = new DeepL(self::$authKey);
@@ -357,7 +382,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Ein weiterer Text neue Zeile <p>dies ist ein Absatz</p>",
+                'text'                     => "Ein weiterer Text<br>neue Zeile <p>dies ist ein Absatz</p></br> ",
             ),
 
         );
@@ -376,7 +401,7 @@ class DeepLApiTest extends TestCase
             array('p')
         );
 
-        $this->assertEquals($expectedArray, $translatedText);
+        self::assertEquals($expectedArray, $translatedText);
     }
 
     /**
@@ -385,7 +410,7 @@ class DeepLApiTest extends TestCase
     public function testTranslateWithNotSupportedSourceLanguage()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
@@ -400,12 +425,96 @@ class DeepLApiTest extends TestCase
     public function testTranslateWithNotSupportedDestinationLanguage()
     {
         if (self::$authKey === false) {
-            $this->markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         $deepl = new DeepL(self::$authKey);
 
         $this->expectException('\BabyMarkt\DeepL\DeepLException');
         $deepl->translate('some txt', 'en', 'dk');
+    }
+
+    /**
+     * Test Glossary creation
+     */
+    public function testCreateGlossary()
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $entries  = ['Hallo' => 'Hello'];
+        $glossary = $deepl->createGlossary('test', $entries, 'de', 'en');
+
+        self::assertArrayHasKey('glossary_id', $glossary);
+
+        return $glossary['glossary_id'];
+    }
+
+    /**
+     * Test Glossary listing
+     */
+    public function testListGlossaries()
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl      = new DeepL(self::$authKey);
+        $glossaries = $deepl->listGlossaries();
+
+        self::assertNotEmpty($glossaries['glossaries']);
+    }
+
+    /**
+     * Test listing information about a glossary
+     *
+     * @depends testCreateGlossary
+     */
+    public function testGlossaryInformation($glossaryId)
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl        = new DeepL(self::$authKey);
+        $information = $deepl->glossaryInformation($glossaryId);
+
+        self::assertArrayHasKey('glossary_id', $information);
+    }
+
+    /**
+     * Test listing entries in a glossary
+     *
+     * @depends testCreateGlossary
+     */
+    public function testGlossaryEntries($glossaryId)
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl   = new DeepL(self::$authKey);
+        $entries = $deepl->glossaryEntries($glossaryId);
+
+        self::assertEquals($entries, ['Hallo' => 'Hello']);
+    }
+
+    /**
+     * Test deleting a glossary
+     *
+     * @depends testCreateGlossary
+     */
+    public function testDeleteGlossary($glossaryId)
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new DeepL(self::$authKey);
+        $response = $deepl->deleteGlossary($glossaryId);
+
+        self::assertNull($response);
     }
 }
