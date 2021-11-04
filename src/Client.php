@@ -106,7 +106,7 @@ final class Client implements ClientInterface
      *
      * @throws DeepLException
      */
-    public function request($url, $body = '', $method = 'GET')
+    public function request($url, $body = '', $method = 'POST')
     {
         switch ($method) {
             case 'DELETE':
