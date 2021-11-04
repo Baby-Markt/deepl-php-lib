@@ -49,7 +49,7 @@ interface ClientInterface
      *
      * @return string
      */
-    public function buildBaseUrl(string $resource = 'translate', bool $withAuth = true): string;
+    public function buildBaseUrl(string $resource = 'translate'): string;
 
     /**
      * @param array $paramsArray

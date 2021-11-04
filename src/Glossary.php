@@ -73,7 +73,7 @@ class Glossary
             'entries_format' => $entriesFormat
         ];
 
-        $url  = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES, false);
+        $url  = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES);
         $body = $this->client->buildQuery($paramsArray);
 
         return $this->client->request($url, $body);
@@ -88,7 +88,7 @@ class Glossary
      */
     public function deleteGlossary(string $glossaryId)
     {
-        $url = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES, false);
+        $url = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES);
         $url .= "/$glossaryId";
 
         return $this->client->request($url, '', 'DELETE');
@@ -103,7 +103,7 @@ class Glossary
      */
     public function glossaryInformation(string $glossaryId)
     {
-        $url  = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES, false);
+        $url  = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES);
         $url .= "/$glossaryId";
 
         return $this->client->request($url, '', 'GET');
@@ -118,7 +118,7 @@ class Glossary
      */
     public function glossaryEntries(string $glossaryId)
     {
-        $url = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES, false);
+        $url = $this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES);
         $url .= "/$glossaryId/entries";
 
         $response = $this->client->request($url, '', 'GET');

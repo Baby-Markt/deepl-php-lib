@@ -183,16 +183,16 @@ final class Client implements ClientInterface
     }
 
     /**
-     * Creates the Base-Url which all of the 3 API-resources have in common.
+     * Creates the Base-Url which all the API-resources have in common.
      *
      * @param string $resource
      * @param bool   $withAuth
      *
      * @return string
      */
-    public function buildBaseUrl(string $resource = 'translate', bool $withAuth = true): string
+    public function buildBaseUrl(string $resource = 'translate'): string
     {
-        if ($withAuth) {
+        if ($this->authKey) {
             return sprintf(
                 self::API_URL_BASE,
                 self::API_URL_SCHEMA,
