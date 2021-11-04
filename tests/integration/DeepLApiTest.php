@@ -2,6 +2,7 @@
 
 namespace BabyMarkt\DeepL\integration;
 
+use BabyMarkt\DeepL\Client;
 use BabyMarkt\DeepL\DeepL;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -323,12 +324,12 @@ class DeepLApiTest extends TestCase
      */
     public function testCustomTimeout()
     {
-        $deepl = new DeepL(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
+        $deepl = new Client(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
         $deepl->setTimeout(2);
 
         $start = time();
         try {
-            $deepl->translate('some text');
+            $deepl->request('/unavailable', 'some text');
         } catch (\Exception $e) {
             $time = time() - $start;
             $this->assertLessThan(4, $time);
