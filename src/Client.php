@@ -192,7 +192,7 @@ final class Client implements ClientInterface
      */
     public function buildBaseUrl(string $resource = 'translate'): string
     {
-        if ($this->authKey) {
+        if (!empty($this->authKey)) {
             return sprintf(
                 self::API_URL_BASE,
                 self::API_URL_SCHEMA,
