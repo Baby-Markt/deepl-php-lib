@@ -2,8 +2,8 @@
 
 namespace BabyMarkt\DeepL\integration;
 
-use BabyMarkt\DeepL\DeepL;
 use BabyMarkt\DeepL\Glossary;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class GlossaryTest extends TestCase
@@ -37,8 +37,19 @@ class GlossaryTest extends TestCase
 
         $glossariesResponse = $glossaryAPI->listGlossaries();
 
+        $fiveMinutesAgo = new DateTime(
+            date(
+                'Y-m-d H:i:s',
+                time() - 60 * 5
+            )
+        );
+
+        // Cleanup old test fixtures in the deepl API. The 5 minute threashold is used to prevent parallel tests
+        // execution intervention on the CI server.
         foreach ($glossariesResponse['glossaries'] as $glossary) {
-            $glossaryAPI->deleteGlossary($glossary['glossary_id']);
+            if (new DateTime($glossary['creation_time']) < $fiveMinutesAgo) {
+                $glossaryAPI->deleteGlossary($glossary['glossary_id']);
+            }
         }
     }
 
