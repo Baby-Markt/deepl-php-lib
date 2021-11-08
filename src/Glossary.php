@@ -39,7 +39,7 @@ class Glossary
      */
     public function listGlossaries()
     {
-        return $this->client->request($this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES));
+        return $this->client->request($this->client->buildBaseUrl(self::API_URL_RESOURCE_GLOSSARIES), '', 'GET');
     }
 
     /**

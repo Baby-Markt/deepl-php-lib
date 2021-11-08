@@ -190,7 +190,7 @@ class ClientTest extends TestCase
     {
         $authKey     = '123456';
         $host        = 'myownhost.dev';
-        $expectedUrl = 'https://' . $host . '/v2/translate?auth_key=' . $authKey;
+        $expectedUrl = 'https://' . $host . '/v2/translate';
         $testSubject = new Client($authKey, 2, $host);
         $result      = $testSubject->buildBaseUrl();
 
@@ -203,7 +203,7 @@ class ClientTest extends TestCase
     public function testBuildBaseUrl()
     {
         $authKey     = '123456';
-        $expectedUrl = 'https://api.deepl.com/v2/translate?auth_key=' . $authKey;
+        $expectedUrl = 'https://api.deepl.com/v2/translate';
         $testSubject = new Client($authKey);
         $result      = $testSubject->buildBaseUrl();
 

@@ -83,6 +83,8 @@ final class Client implements ClientInterface
         $this->apiVersion = $apiVersion;
         $this->host       = $host;
         $this->curl       = curl_init();
+
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
     }
 
     /**
@@ -117,9 +119,6 @@ final class Client implements ClientInterface
                 curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
                 break;
             case 'GET':
-                curl_setopt($this->curl, CURLOPT_POST, false);
-                curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'GET');
-                break;
             default:
                 break;
         }
@@ -158,7 +157,6 @@ final class Client implements ClientInterface
      */
     public function setProxy($proxy)
     {
-
         $this->proxy = $proxy;
     }
 
@@ -192,16 +190,16 @@ final class Client implements ClientInterface
      */
     public function buildBaseUrl(string $resource = 'translate'): string
     {
-        if (!empty($this->authKey)) {
-            return sprintf(
-                self::API_URL_BASE,
-                self::API_URL_SCHEMA,
-                $this->host,
-                $this->apiVersion,
-                $resource,
-                $this->authKey
-            );
-        }
+//        if (!empty($this->authKey)) {
+//            return sprintf(
+//                self::API_URL_BASE,
+//                self::API_URL_SCHEMA,
+//                $this->host,
+//                $this->apiVersion,
+//                $resource,
+//                $this->authKey
+//            );
+//        }
 
         return sprintf(
             self::API_URL_BASE_NO_AUTH,

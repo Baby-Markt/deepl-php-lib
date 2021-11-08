@@ -383,7 +383,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Ein weiterer Text<br>neue Zeile <p>dies ist ein Absatz</p></br> ",
+                'text'                     => "Eine weitere<br>neue Textzeile <p>, die ein Absatz ist</p></br> ",
             ),
 
         );

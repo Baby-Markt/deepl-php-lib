@@ -31,6 +31,17 @@ class GlossaryTest extends TestCase
         self::$authKey = $authKey;
     }
 
+    public static function tearDownAfterClass(): void
+    {
+        $glossaryAPI = new Glossary(self::$authKey);
+
+        $glossariesResponse = $glossaryAPI->listGlossaries();
+
+        foreach ($glossariesResponse['glossaries'] as $glossary) {
+            $glossaryAPI->deleteGlossary($glossary['glossary_id']);
+        }
+    }
+
     /**
      * Test Glossary creation
      */
