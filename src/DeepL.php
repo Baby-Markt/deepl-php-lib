@@ -37,6 +37,7 @@ class DeepL
      * @param string $type
      *
      * @return array
+     *
      * @throws DeepLException
      */
     public function languages($type = null)
@@ -65,6 +66,7 @@ class DeepL
      * @param array|null      $splittingTags
      *
      * @return array
+     *
      * @throws DeepLException
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -113,6 +115,7 @@ class DeepL
      * Calls the usage-Endpoint and return Json-response as an array
      *
      * @return array
+     *
      * @throws DeepLException
      */
     public function usage()

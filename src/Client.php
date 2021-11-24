@@ -10,12 +10,6 @@ final class Client implements ClientInterface
     const API_URL_SCHEMA = 'https';
 
     /**
-     * API BASE URL
-     * https://api.deepl.com/v2/[resource]?auth_key=[yourAuthKey]
-     */
-    const API_URL_BASE = '%s://%s/v%s/%s?auth_key=%s';
-
-    /**
      * API BASE URL without authentication query parameter
      * https://api.deepl.com/v2/[resource]
      */
@@ -190,17 +184,6 @@ final class Client implements ClientInterface
      */
     public function buildBaseUrl(string $resource = 'translate'): string
     {
-//        if (!empty($this->authKey)) {
-//            return sprintf(
-//                self::API_URL_BASE,
-//                self::API_URL_SCHEMA,
-//                $this->host,
-//                $this->apiVersion,
-//                $resource,
-//                $this->authKey
-//            );
-//        }
-
         return sprintf(
             self::API_URL_BASE_NO_AUTH,
             self::API_URL_SCHEMA,
@@ -222,7 +205,7 @@ final class Client implements ClientInterface
             unset($paramsArray['text']);
             $textString = '';
             foreach ($text as $textElement) {
-                $textString .= '&text='.rawurlencode($textElement);
+                $textString .= '&text=' . rawurlencode($textElement);
             }
         }
 
@@ -235,7 +218,7 @@ final class Client implements ClientInterface
         $body = http_build_query($paramsArray, null, '&');
 
         if (isset($textString)) {
-            $body = $textString.'&'.$body;
+            $body = $textString . '&' . $body;
         }
 
         return $body;
@@ -246,6 +229,7 @@ final class Client implements ClientInterface
      *
      * @param $response
      * @param $httpCode
+     *
      * @return array|mixed|null
      * @throws DeepLException
      */

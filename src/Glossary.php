@@ -35,6 +35,7 @@ class Glossary
      * Calls the glossary-Endpoint and return Json-response as an array
      *
      * @return array
+     *
      * @throws DeepLException
      */
     public function listGlossaries()
@@ -50,7 +51,9 @@ class Glossary
      * @param string $sourceLang
      * @param string $targetLang
      * @param string $entriesFormat
+     *
      * @return array|null
+     *
      * @throws DeepLException
      */
     public function createGlossary(
@@ -83,7 +86,9 @@ class Glossary
      * Deletes a glossary
      *
      * @param string $glossaryId
+     *
      * @return array|null
+     *
      * @throws DeepLException
      */
     public function deleteGlossary(string $glossaryId)
@@ -98,7 +103,9 @@ class Glossary
      * Gets information about a glossary
      *
      * @param string $glossaryId
+     *
      * @return array|null
+     *
      * @throws DeepLException
      */
     public function glossaryInformation(string $glossaryId)
@@ -113,7 +120,9 @@ class Glossary
      * Fetch glossary entries and format them as associative array [source => target]
      *
      * @param string $glossaryId
+     *
      * @return array
+     *
      * @throws DeepLException
      */
     public function glossaryEntries(string $glossaryId)
