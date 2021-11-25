@@ -119,8 +119,8 @@ final class Client implements ClientInterface
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
 
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array("Authorization: DeepL-Auth-Key $this->authKey"));
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Authorization: DeepL-Auth-Key ' . $this->authKey]);
 
         if ($this->proxy !== null) {
             curl_setopt($this->curl, CURLOPT_PROXY, $this->proxy);
@@ -231,6 +231,7 @@ final class Client implements ClientInterface
      * @param $httpCode
      *
      * @return array|mixed|null
+     *
      * @throws DeepLException
      */
     private function handleResponse($response, $httpCode)
