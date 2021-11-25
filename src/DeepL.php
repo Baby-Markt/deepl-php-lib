@@ -11,13 +11,6 @@ use InvalidArgumentException;
  */
 class DeepL
 {
-    const API_URL_SCHEMA = 'https';
-    /**
-     * API BASE URL
-     * https://api.deepl.com/v2/[resource]?auth_key=[yourAuthKey]
-     */
-    const API_URL_BASE = '%s://%s/v%s/%s?auth_key=%s';
-
     /**
      * API URL: usage
      */
@@ -29,79 +22,13 @@ class DeepL
     const API_URL_RESOURCE_LANGUAGES = 'languages';
 
     /**
-     * DeepL API Version (v2 is default since 2018)
-     *
-     * @var integer
+     * @var ClientInterface
      */
-    protected $apiVersion;
+    private $client;
 
-    /**
-     * DeepL API Auth Key (DeepL Pro access required)
-     *
-     * @var string
-     */
-    protected $authKey;
-
-    /**
-     * cURL resource
-     *
-     * @var resource
-     */
-    protected $curl;
-
-    /**
-     * Hostname of the API (in most cases api.deepl.com)
-     *
-     * @var string
-     */
-    protected $host;
-
-    /**
-     * URL of the proxy used to connect to DeepL (if needed)
-     *
-     * @var string|null
-     */
-    protected $proxy = null;
-
-    /**
-     * Credentials for the proxy used to connect to DeepL (username:password)
-     *
-     * @var string|null
-     */
-    protected $proxyCredentials = null;
-
-    /**
-     * Maximum number of seconds the query should take
-     *
-     * @var int|null
-     */
-    protected $timeout = null;
-
-    /**
-     * DeepL constructor
-     *
-     * @param string  $authKey
-     * @param integer $apiVersion
-     * @param string  $host
-     */
-    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com')
+    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com', ClientInterface $client = null)
     {
-        $this->authKey    = $authKey;
-        $this->apiVersion = $apiVersion;
-        $this->host       = $host;
-        $this->curl       = curl_init();
-
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
-    }
-
-    /**
-     * DeepL destructor
-     */
-    public function __destruct()
-    {
-        if ($this->curl && is_resource($this->curl)) {
-            curl_close($this->curl);
-        }
+        $this->client = $client ?? new Client($authKey, $apiVersion, $host);
     }
 
     /**
@@ -110,46 +37,16 @@ class DeepL
      * @param string $type
      *
      * @return array
+     *
      * @throws DeepLException
      */
     public function languages($type = null)
     {
-        $url       = $this->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
-        $body      = $this->buildQuery(array('type' => $type));
-        $languages = $this->request($url, $body);
+        $url       = $this->client->buildBaseUrl(self::API_URL_RESOURCE_LANGUAGES);
+        $body      = $this->client->buildQuery(array('type' => $type));
+        $languages = $this->client->request($url, $body);
 
         return $languages;
-    }
-
-    /**
-     * Set a proxy to use for querying the DeepL API if needed
-     *
-     * @param string $proxy Proxy URL (e.g 'http://proxy-domain.com:3128')
-     */
-    public function setProxy($proxy)
-    {
-
-        $this->proxy = $proxy;
-    }
-
-    /**
-     * Set the proxy credentials
-     *
-     * @param string $proxyCredentials proxy credentials (using 'username:password' format)
-     */
-    public function setProxyCredentials($proxyCredentials)
-    {
-        $this->proxyCredentials = $proxyCredentials;
-    }
-
-    /**
-     * Set a timeout for queries to the DeepL API
-     *
-     * @param int $timeout Timeout in seconds
-     */
-    public function setTimeout($timeout)
-    {
-        $this->timeout = $timeout;
     }
 
     /**
@@ -169,6 +66,7 @@ class DeepL
      * @param array|null      $splittingTags
      *
      * @return array
+     *
      * @throws DeepLException
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -204,11 +102,11 @@ class DeepL
         );
 
         $paramsArray = $this->removeEmptyParams($paramsArray);
-        $url         = $this->buildBaseUrl();
-        $body        = $this->buildQuery($paramsArray);
+        $url         = $this->client->buildBaseUrl();
+        $body        = $this->client->buildQuery($paramsArray);
 
         // request the DeepL API
-        $translationsArray = $this->request($url, $body);
+        $translationsArray = $this->client->request($url, $body);
 
         return $translationsArray['translations'];
     }
@@ -217,118 +115,15 @@ class DeepL
      * Calls the usage-Endpoint and return Json-response as an array
      *
      * @return array
+     *
      * @throws DeepLException
      */
     public function usage()
     {
-        $url   = $this->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
-        $usage = $this->request($url);
+        $url   = $this->client->buildBaseUrl(self::API_URL_RESOURCE_USAGE);
+        $usage = $this->client->request($url);
 
         return $usage;
-    }
-
-
-    /**
-     * Creates the Base-Url which all of the 3 API-resources have in common.
-     *
-     * @param string $resource
-     *
-     * @return string
-     */
-    protected function buildBaseUrl($resource = 'translate')
-    {
-        $url = sprintf(
-            self::API_URL_BASE,
-            self::API_URL_SCHEMA,
-            $this->host,
-            $this->apiVersion,
-            $resource,
-            $this->authKey
-        );
-
-        return $url;
-    }
-
-    /**
-     * @param array $paramsArray
-     *
-     * @return string
-     */
-    protected function buildQuery($paramsArray)
-    {
-        if (isset($paramsArray['text']) && true === is_array($paramsArray['text'])) {
-            $text = $paramsArray['text'];
-            unset($paramsArray['text']);
-            $textString = '';
-            foreach ($text as $textElement) {
-                $textString .= '&text='.rawurlencode($textElement);
-            }
-        }
-
-        foreach ($paramsArray as $key => $value) {
-            if (true === is_array($value)) {
-                $paramsArray[$key] = implode(',', $value);
-            }
-        }
-
-        $body = http_build_query($paramsArray, null, '&');
-
-        if (isset($textString)) {
-            $body = $textString.'&'.$body;
-        }
-
-        return $body;
-    }
-
-
-
-
-    /**
-     * Make a request to the given URL
-     *
-     * @param string $url
-     * @param string $body
-     *
-     * @return array
-     *
-     * @throws DeepLException
-     */
-    protected function request($url, $body = '')
-    {
-        curl_setopt($this->curl, CURLOPT_POST, true);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-
-        if ($this->proxy !== null) {
-            curl_setopt($this->curl, CURLOPT_PROXY, $this->proxy);
-        }
-
-        if ($this->proxyCredentials !== null) {
-            curl_setopt($this->curl, CURLOPT_PROXYAUTH, $this->proxyCredentials);
-        }
-
-        if ($this->timeout !== null) {
-            curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
-        }
-
-        $response = curl_exec($this->curl);
-
-        if (curl_errno($this->curl)) {
-            throw new DeepLException('There was a cURL Request Error : ' . curl_error($this->curl));
-        }
-        $httpCode      = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-        $responseArray = json_decode($response, true);
-
-        if ($httpCode != 200 && is_array($responseArray) && array_key_exists('message', $responseArray)) {
-            throw new DeepLException($responseArray['message'], $httpCode);
-        }
-
-        if (false === is_array($responseArray)) {
-            throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
-        }
-
-        return $responseArray;
     }
 
     /**
@@ -338,7 +133,6 @@ class DeepL
      */
     private function removeEmptyParams($paramsArray)
     {
-
         foreach ($paramsArray as $key => $value) {
             if (true === empty($value)) {
                 unset($paramsArray[$key]);

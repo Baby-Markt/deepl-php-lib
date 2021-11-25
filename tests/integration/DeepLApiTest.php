@@ -2,6 +2,7 @@
 
 namespace BabyMarkt\DeepL\integration;
 
+use BabyMarkt\DeepL\Client;
 use BabyMarkt\DeepL\DeepL;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -228,7 +229,7 @@ class DeepLApiTest extends TestCase
     }
 
     /**
-     * Test languages()  can return the targe-languages
+     * Test languages()  can return the target-languages
      */
     public function testLanguagesTarget()
     {
@@ -323,12 +324,12 @@ class DeepLApiTest extends TestCase
      */
     public function testCustomTimeout()
     {
-        $deepl = new DeepL(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
+        $deepl = new Client(self::$authKey, 2, '10.255.255.1'); // non routable IP, should timeout.
         $deepl->setTimeout(2);
 
         $start = time();
         try {
-            $deepl->translate('some text');
+            $deepl->request('/unavailable', 'some text');
         } catch (\Exception $e) {
             $time = time() - $start;
             $this->assertLessThan(4, $time);
@@ -382,7 +383,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Ein weiterer Text<br>neue Zeile <p>dies ist ein Absatz</p></br> ",
+                'text'                     => "Eine weitere<br>neue Textzeile <p>, die ein Absatz ist</p></br> ",
             ),
 
         );
