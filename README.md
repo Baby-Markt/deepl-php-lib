@@ -28,12 +28,16 @@ composer require babymarkt/deepl-php-lib
 Create an instance with your auth key:
 
 ```php
+use \BabyMarkt\DeepL\DeepL;
+
 $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey);
 ```
 
 Use the DeepL API Pro:
 ```php
+use \BabyMarkt\DeepL\DeepL;
+
 $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey,2,'api.deepl.com');
 ```
@@ -110,7 +114,7 @@ You can now check how much you translate, as well as the limit:
 $usageArray = $deepl->usage();
 
 echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['character_limit'].' in the current billing period.'.PHP_EOL;
- 
+
 ```
 
 ### Glossary
