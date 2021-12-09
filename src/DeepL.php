@@ -73,7 +73,7 @@ class DeepL
      */
     public function translate(
         $text,
-        $sourceLang = 'de',
+        $sourceLang = '',
         $targetLang = 'en',
         $tagHandling = null,
         array $ignoreTags = null,
