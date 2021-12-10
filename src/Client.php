@@ -245,6 +245,47 @@ final class Client implements ClientInterface
             throw new DeepLException($responseArray['message'], $httpCode);
         }
 
+		/**
+		 * @see https://www.deepl.com/docs-api/accessing-the-api/error-handling/
+		 */
+		switch ($httpCode) {
+			case '400':
+				throw new DeepLException('Bad request. Please check error message and your parameters.', $httpCode);
+				break;
+
+			case '403':
+				throw new DeepLException('Authorization failed. Please supply a valid auth_key parameter.', $httpCode);
+				break;
+
+			case '404':
+				throw new DeepLException('The requested resource could not be found.', $httpCode);
+				break;
+
+			case '413':
+				throw new DeepLException('The request size exceeds the limit.', $httpCode);
+				break;
+
+			case '414':
+				throw new DeepLException('The request URL is too long. You can avoid this error by using a POST request instead of a GET request, and sending the parameters in the HTTP body.', $httpCode);
+				break;
+
+			case '429':
+				throw new DeepLException('Too many requests. Please wait and resend your request.', $httpCode);
+				break;
+
+			case '456':
+				throw new DeepLException('Quota exceeded. The character limit has been reached.', $httpCode);
+				break;
+
+			case '503':
+				throw new DeepLException('Resource currently unavailable. Try again later.', $httpCode);
+				break;
+
+			case '529':
+				throw new DeepLException('Too many requests. Please wait and resend your request.', $httpCode);
+				break;
+		}
+
         if (!is_array($responseArray)) {
             throw new DeepLException('The Response seems to not be valid JSON.', $httpCode);
         }
