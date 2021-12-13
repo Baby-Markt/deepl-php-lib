@@ -141,6 +141,8 @@ $glossary = $deepl->deleteGlossary($glossaryId);
 
 List glossaries
 ```php
+use \BabyMarkt\DeepL\Glossary;
+
 $glossaries = $deepl->listGlossaries();
 foreach ($glossaries as $glossary) {
     var_dump($glossary);
@@ -149,6 +151,8 @@ foreach ($glossaries as $glossary) {
 
 Get glossary meta information: creation date, is glossary ready to use ...
 ```php
+use \BabyMarkt\DeepL\Glossary;
+
 $glossaryInformation = $deepl->glossaryInformation($glossaryId);
 var_dump($glossaryInformation);
 ```
