@@ -3,6 +3,7 @@
 namespace BabyMarkt\DeepL;
 
 use InvalidArgumentException;
+use function Couchbase\defaultDecoder;
 
 /**
  * DeepL API client library
@@ -64,6 +65,7 @@ class DeepL
      * @param array|null      $nonSplittingTags
      * @param null            $outlineDetection
      * @param array|null      $splittingTags
+     * @param string|null      $glossaryId
      *
      * @return array
      *
@@ -82,7 +84,8 @@ class DeepL
         $preserveFormatting = null,
         array $nonSplittingTags = null,
         $outlineDetection = null,
-        array $splittingTags = null
+        array $splittingTags = null,
+        string $glossaryId = null
     ) {
         if (is_array($tagHandling)) {
             throw new InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
@@ -99,6 +102,7 @@ class DeepL
             'split_sentences'     => $splitSentences,
             'preserve_formatting' => $preserveFormatting,
             'outline_detection'   => $outlineDetection,
+            'glossary_id'         => $glossaryId
         );
 
         $paramsArray = $this->removeEmptyParams($paramsArray);
