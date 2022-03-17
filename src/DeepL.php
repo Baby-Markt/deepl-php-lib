@@ -3,7 +3,6 @@
 namespace BabyMarkt\DeepL;
 
 use InvalidArgumentException;
-use function Couchbase\defaultDecoder;
 
 /**
  * DeepL API client library
