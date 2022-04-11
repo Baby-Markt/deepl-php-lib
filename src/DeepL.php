@@ -56,6 +56,7 @@ class DeepL
      * @param string|string[] $text
      * @param string          $sourceLang
      * @param string          $targetLang
+     * @param string          $glossaryId
      * @param string          $tagHandling
      * @param array|null      $ignoreTags
      * @param string          $formality
@@ -75,6 +76,7 @@ class DeepL
         $text,
         $sourceLang = 'de',
         $targetLang = 'en',
+        $glossaryId = null,
         $tagHandling = null,
         array $ignoreTags = null,
         $formality = 'default',
@@ -91,6 +93,7 @@ class DeepL
             'text'                => $text,
             'source_lang'         => $sourceLang,
             'target_lang'         => $targetLang,
+            'glossary_id'         => $glossaryId,
             'splitting_tags'      => $splittingTags,
             'non_splitting_tags'  => $nonSplittingTags,
             'ignore_tags'         => $ignoreTags,
