@@ -25,7 +25,7 @@ class GlossaryTest extends TestCase
         $authKey = getenv('DEEPL_AUTH_KEY');
 
         if ($authKey === false) {
-            return;
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         self::$authKey = $authKey;
