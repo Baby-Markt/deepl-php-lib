@@ -91,8 +91,8 @@ You can check for the supported Source-Languages:
 ```php
 $sourceLanguagesArray = $deepl->languages('source');
 
-foreach ($sourceLanguagesArray as $srouceLanguage) {
-    echo 'Name: '.$srouceLanguage['name'].' Api-shorthand: '.$srouceLanguage['language'].PHP_EOL;
+foreach ($sourceLanguagesArray as $sourceLanguage) {
+    echo 'Name: '.$sourceLanguage['name'].' Api-shorthand: '.$sourceLanguage['language'].PHP_EOL;
 }
 ```
 
