@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit colors="true">
-    <testsuites>
-        <testsuite name="DeepL Library Test Suite">
-            <directory>tests/</directory>
-        </testsuite>
-    </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
-
-    <logging>
-        <log type="coverage-clover" target="build/clover.xml" />
-    </logging>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">src/</directory>
+    </include>
+    <report>
+      <clover outputFile="build/clover.xml"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="DeepL Library Test Suite">
+      <directory>tests/</directory>
+    </testsuite>
+  </testsuites>
+  <logging/>
 </phpunit>
