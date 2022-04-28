@@ -23,6 +23,12 @@ class DeepLApiTest extends TestCase
     protected static $authKey = false;
 
     /**
+     * DeepL Auth Key.
+     *
+     * @var string
+     */
+    protected static $apiHost;
+    /**
      * Proxy URL
      * @var bool|string
      */
@@ -42,6 +48,7 @@ class DeepLApiTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
+        $apiHost = getenv('DEEPL_HOST') ?: 'api.deepl.com';
         $proxy = getenv('HTTP_PROXY');
         $proxyCredentials = getenv('HTTP_PROXY_CREDENTIALS');
 
@@ -49,8 +56,9 @@ class DeepLApiTest extends TestCase
             return;
         }
 
-        self::$authKey = $authKey;
-        self::$proxy = $proxy;
+        self::$authKey          = $authKey;
+        self::$apiHost          = $apiHost;
+        self::$proxy            = $proxy;
         self::$proxyCredentials = $proxyCredentials;
     }
 
@@ -82,7 +90,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $germanText     = 'Hallo Welt';
         $expectedText   = 'Hello world';
@@ -101,7 +109,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey, 1);
+        $deepl = new DeepL(self::$authKey, 1, self::$apiHost);
 
         $germanText     = 'Hallo Welt';
         $expectedText   = 'Hello world';
@@ -120,7 +128,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
         $germanText = 'Hallo Welt';
-        $deepl      = new DeepL(self::$authKey, 3);
+        $deepl      = new DeepL(self::$authKey, 3, self::$apiHost);
 
         $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
@@ -136,7 +144,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $englishText  = '<strong>text to translate</strong>';
         $expectedText = '<strong>zu übersetzender Text</strong>';
@@ -160,7 +168,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $englishText  = '<strong>text to do not translate</strong><p>text to translate</p>';
         $expectedText = '<strong>text to do not translate</strong><p>zu übersetzender Text</p>';
@@ -185,7 +193,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new DeepL(self::$authKey);
+        $deepl    = new DeepL(self::$authKey, 2, self::$apiHost);
         $response = $deepl->usage();
 
         self::assertArrayHasKey('character_count', $response);
@@ -201,7 +209,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new DeepL(self::$authKey);
+        $deepl    = new DeepL(self::$authKey, 2, self::$apiHost);
         $response = $deepl->languages();
 
         foreach ($response as $language) {
@@ -219,7 +227,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new DeepL(self::$authKey);
+        $deepl    = new DeepL(self::$authKey, 2, self::$apiHost);
         $response = $deepl->languages('source');
 
         foreach ($response as $language) {
@@ -237,7 +245,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new DeepL(self::$authKey);
+        $deepl    = new DeepL(self::$authKey, 2, self::$apiHost);
         $response = $deepl->languages('target');
 
         foreach ($response as $language) {
@@ -255,7 +263,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new DeepL(self::$authKey);
+        $deepl    = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $this->expectException('\BabyMarkt\DeepL\DeepLException');
 
@@ -271,7 +279,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $englishText  = '<strong>text to do not translate</strong><p>please translate this text</p>';
         $expectedText = '<strong>text to do not translate</strong><p>bitte übersetzen Sie diesen Text</p>';
@@ -303,13 +311,15 @@ class DeepLApiTest extends TestCase
         }
 
         if (self::$proxy === false) {
-            // The test would succeed with $proxy === false but it wouln't mean anything.
+            // The test would succeed with $proxy === false but it wouldn't mean anything.
             $this->markTestSkipped('Proxy is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
-        $deepl->setProxy(self::$proxy);
-        $deepl->setProxyCredentials(self::$proxyCredentials);
+        $client = new Client(self::$authKey, 2, self::$apiHost);
+        $client->setProxy(self::$proxy);
+        $client->setProxyCredentials(self::$proxyCredentials);
+
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost, $client);
 
         $englishText  = 'please translate this text';
         $expectedText = 'Bitte übersetzen Sie diesen Text';
@@ -345,7 +355,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $englishText    = '<strong>text to do not translate</strong><p>please translate this text</p>';
         $expectedText   = '<strong>Nicht zu übersetzender Text</strong><p>Bitte übersetze diesen Text</p>';
@@ -370,7 +380,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl           = new DeepL(self::$authKey);
+        $deepl           = new DeepL(self::$authKey, 2, self::$apiHost);
         $textToTranslate = array(
             'Hello World<strong>This should stay the same</strong>',
             'Another Text<br> new line <p>this is a paragraph</p>'
@@ -383,7 +393,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Eine weitere<br>neue Textzeile <p>, die ein Absatz ist</p></br> ",
+                'text'                     => "Eine weitere<br>neue Textzeile <p>, dies ist ein Absatz</p></br> ",
             ),
 
         );
@@ -414,7 +424,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $this->expectException('\BabyMarkt\DeepL\DeepLException');
         $deepl->translate('some txt', 'dk', 'de');
@@ -429,7 +439,7 @@ class DeepLApiTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl = new DeepL(self::$authKey);
+        $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
         $this->expectException('\BabyMarkt\DeepL\DeepLException');
         $deepl->translate('some txt', 'en', 'dk');
