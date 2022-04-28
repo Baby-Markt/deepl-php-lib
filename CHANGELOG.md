@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2022-29-04
+### Added
+- PHP 8.1 compatibility
+- glossary_id to translate-method
+- ability to run Integration-Tests against custom host if needed (Free/Pro)
+### Changed
+- migrated phpunit.xml.dist
+- fixed some Tests and general Maintenance such as Typos in README.md
+### Removed
+
 ## [3.0.1] - 2021-07-09
 ### Added
 ### Changed
