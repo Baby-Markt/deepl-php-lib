@@ -28,12 +28,16 @@ composer require babymarkt/deepl-php-lib
 Create an instance with your auth key:
 
 ```php
+use \BabyMarkt\DeepL\DeepL;
+
 $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey);
 ```
 
 Use the DeepL API Pro:
 ```php
+use \BabyMarkt\DeepL\DeepL;
+
 $authKey = '<AUTH KEY>';
 $deepl   = new DeepL($authKey,2,'api.deepl.com');
 ```
@@ -91,8 +95,8 @@ You can check for the supported Source-Languages:
 ```php
 $sourceLanguagesArray = $deepl->languages('source');
 
-foreach ($sourceLanguagesArray as $srouceLanguage) {
-    echo 'Name: '.$srouceLanguage['name'].' Api-shorthand: '.$srouceLanguage['language'].PHP_EOL;
+foreach ($sourceLanguagesArray as $sourceLanguage) {
+    echo 'Name: '.$sourceLanguage['name'].' Api-shorthand: '.$sourceLanguage['language'].PHP_EOL;
 }
 ```
 
@@ -110,7 +114,7 @@ You can now check how much you translate, as well as the limit:
 $usageArray = $deepl->usage();
 
 echo 'You have used '.$usageArray['character_count'].' of '.$usageArray['character_limit'].' in the current billing period.'.PHP_EOL;
- 
+
 ```
 
 ### Glossary
@@ -137,6 +141,8 @@ $glossary = $deepl->deleteGlossary($glossaryId);
 
 List glossaries
 ```php
+use \BabyMarkt\DeepL\Glossary;
+
 $glossaries = $deepl->listGlossaries();
 foreach ($glossaries as $glossary) {
     var_dump($glossary);
@@ -145,6 +151,8 @@ foreach ($glossaries as $glossary) {
 
 Get glossary meta information: creation date, is glossary ready to use ...
 ```php
+use \BabyMarkt\DeepL\Glossary;
+
 $glossaryInformation = $deepl->glossaryInformation($glossaryId);
 var_dump($glossaryInformation);
 ```
