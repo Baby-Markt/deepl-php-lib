@@ -48,7 +48,7 @@ class DeepLApiTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
-        $apiHost = getenv('DEEPL_HOST') ?: 'api.deepl.com';
+        $apiHost = getenv('DEEPL_HOST') ?: 'api-free.deepl.com';
         $proxy = getenv('HTTP_PROXY');
         $proxyCredentials = getenv('HTTP_PROXY_CREDENTIALS');
 

@@ -6,8 +6,6 @@ use InvalidArgumentException;
 
 /**
  * DeepL API client library
- *
- * @package BabyMarkt\DeepL
  */
 class DeepL
 {
@@ -26,7 +24,7 @@ class DeepL
      */
     private $client;
 
-    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com', ClientInterface $client = null)
+    public function __construct($authKey, $apiVersion = 2, $host = 'api-free.deepl.com', ClientInterface $client = null)
     {
         $this->client = $client ?? new Client($authKey, $apiVersion, $host);
     }

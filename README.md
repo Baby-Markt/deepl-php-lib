@@ -1,4 +1,4 @@
-# deepl-php-lib -
+# deepl-php-lib
 ***
 ## Deprecated Library ! 
 
@@ -54,7 +54,7 @@ Use the DeepL API Pro:
 use \BabyMarkt\DeepL\DeepL;
 
 $authKey = '<AUTH KEY>';
-$deepl   = new DeepL($authKey,2,'api.deepl.com');
+$deepl   = new DeepL($authKey,2,'api-free.deepl.com');
 ```
 
 ### Translate

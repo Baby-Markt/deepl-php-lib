@@ -30,7 +30,7 @@ class GlossaryTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
-        $apiHost = getenv('DEEPL_HOST') ?: 'api.deepl.com';
+        $apiHost = getenv('DEEPL_HOST') ?: 'api-free.deepl.com';
 
         if ($authKey === false) {
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
