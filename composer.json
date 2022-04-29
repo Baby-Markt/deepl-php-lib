@@ -1,4 +1,5 @@
 {
+    "abandoned": "deeplcom/deepl-php",
     "name": "babymarkt/deepl-php-lib",
     "type": "library",
     "description": "DeepL API Client Library supporting PHP >= 7.3 && PHP <= 8.1",
