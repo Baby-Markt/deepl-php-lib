@@ -6,14 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [3.1.0] - 2022-29-04
+## [4.0.0] - 2022-**-05
 ### Added
+- marked Package as abandoned
 - PHP 8.1 compatibility
 - glossary_id to translate-method
 - ability to run Integration-Tests against custom host if needed (Free/Pro)
 ### Changed
 - migrated phpunit.xml.dist
 - fixed some Tests and general Maintenance such as Typos in README.md
+- **Breaking Change!**  standard DEEPL_HOST to free again
+- **Breaking Change!** default source Langauge form DE to empty so DeepL will decide
 ### Removed
 
 ## [3.0.1] - 2021-07-09
