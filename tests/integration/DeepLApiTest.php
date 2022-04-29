@@ -92,12 +92,14 @@ class DeepLApiTest extends TestCase
 
         $deepl = new DeepL(self::$authKey, 2, self::$apiHost);
 
-        $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello world';
+        $germanText       = 'Hallo Welt, dies ist ein deutscher Text.';
+        $expectedText     = 'Hello world, this is a German text.';
+        $expectedLanguage = 'DE';
 
         $translatedText = $deepl->translate($germanText);
 
         self::assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedLanguage, $translatedText[0]['detected_source_language']);
     }
 
     /**
@@ -111,12 +113,14 @@ class DeepLApiTest extends TestCase
 
         $deepl = new DeepL(self::$authKey, 1, self::$apiHost);
 
-        $germanText     = 'Hallo Welt';
-        $expectedText   = 'Hello world';
+        $germanText       = 'Hallo Welt';
+        $expectedText     = 'Hallo Welt';
+        $expectedLanguage = 'IT';
 
         $translatedText = $deepl->translate($germanText);
 
         self::assertEquals($expectedText, $translatedText[0]['text']);
+        self::assertEquals($expectedLanguage, $translatedText[0]['detected_source_language']);
     }
 
     /**
@@ -383,7 +387,7 @@ class DeepLApiTest extends TestCase
         $deepl           = new DeepL(self::$authKey, 2, self::$apiHost);
         $textToTranslate = array(
             'Hello World<strong>This should stay the same</strong>',
-            'Another Text<br> new line <p>this is a paragraph</p>'
+            'Another Text<br> new line. <p>This is a paragraph</p>'
         );
 
         $expectedArray   = array(
@@ -393,7 +397,7 @@ class DeepLApiTest extends TestCase
             ),
             array(
                 'detected_source_language' => "EN",
-                'text'                     => "Eine weitere<br>neue Textzeile <p>, dies ist ein Absatz</p></br> ",
+                'text'                     => "Eine weitere<br>neue Textzeile. <p>Dies ist ein Absatz</p></br> ",
             ),
 
         );
