@@ -28,6 +28,7 @@ class DeepLApiTest extends TestCase
      * @var string
      */
     protected static $apiHost;
+    
     /**
      * Proxy URL
      * @var bool|string
