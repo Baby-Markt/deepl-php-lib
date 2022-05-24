@@ -6,8 +6,6 @@ use InvalidArgumentException;
 
 /**
  * DeepL API client library
- *
- * @package BabyMarkt\DeepL
  */
 class DeepL
 {
@@ -26,7 +24,7 @@ class DeepL
      */
     private $client;
 
-    public function __construct($authKey, $apiVersion = 2, $host = 'api.deepl.com', ClientInterface $client = null)
+    public function __construct($authKey, $apiVersion = 2, $host = 'api-free.deepl.com', ClientInterface $client = null)
     {
         $this->client = $client ?? new Client($authKey, $apiVersion, $host);
     }
@@ -64,6 +62,7 @@ class DeepL
      * @param array|null      $nonSplittingTags
      * @param null            $outlineDetection
      * @param array|null      $splittingTags
+     * @param string|null     $glossaryId
      *
      * @return array
      *
@@ -73,7 +72,7 @@ class DeepL
      */
     public function translate(
         $text,
-        $sourceLang = 'de',
+        $sourceLang = '',
         $targetLang = 'en',
         $tagHandling = null,
         array $ignoreTags = null,
@@ -82,7 +81,8 @@ class DeepL
         $preserveFormatting = null,
         array $nonSplittingTags = null,
         $outlineDetection = null,
-        array $splittingTags = null
+        array $splittingTags = null,
+        string $glossaryId = null
     ) {
         if (is_array($tagHandling)) {
             throw new InvalidArgumentException('$tagHandling must be of type String in V2 of DeepLLibrary');
@@ -99,6 +99,7 @@ class DeepL
             'split_sentences'     => $splitSentences,
             'preserve_formatting' => $preserveFormatting,
             'outline_detection'   => $outlineDetection,
+            'glossary_id'         => $glossaryId
         );
 
         $paramsArray = $this->removeEmptyParams($paramsArray);

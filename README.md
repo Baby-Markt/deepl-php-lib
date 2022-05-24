@@ -1,5 +1,20 @@
 # deepl-php-lib
+***
+## Deprecated Library ! 
 
+Hello everyone,
+
+in the last couple of months we didn't give much attention to this projekt. DeepL on the other hand has developed client libraries for Python, .NET and Node.js (see: [API-Doc][link-deepl-client-libraries]).
+
+Since there is a PHP-Library in the works [Github][link-deepl-php-lib-github] and our track record with maintaining our library hasn't been as good as it should have been, we decided to abandon this library and switch internally to the official one.
+
+To make clear that we won't continue to work on this repository, we will archive it. If anyone from the community wants to continue our work we can put a line in the README to point to the new maintained repository.
+
+Otherwise, we recommend you to check out the new library coming from [DeepL][link-deepl-php-lib-github].
+
+Thank you to everyone who contributed to this project over the years.
+
+***
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
 [![Build Status][ico-travis]][link-travis]
@@ -39,7 +54,7 @@ Use the DeepL API Pro:
 use \BabyMarkt\DeepL\DeepL;
 
 $authKey = '<AUTH KEY>';
-$deepl   = new DeepL($authKey,2,'api.deepl.com');
+$deepl   = new DeepL($authKey,2,'api-free.deepl.com');
 ```
 
 ### Translate
@@ -69,7 +84,7 @@ foreach ($translations as $translation) {
 | param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | $text               | Text to be translated. Only UTF8-encoded plain text is supported. The parameter may be specified as an Array and translations are returned in the same order as they are requested. Each of the array values may contain multiple sentences. Up to 50 texts can be sent for translation in one request.                                                                                                            |
-| $sourceLang         | Language of the text to be translated. <br>default: de                                                                                                                                                                                                                                                                                                                                                                                   |
+| $sourceLang         | Language of the text to be translated. <br>default: "" (DeepL will auto-detect)                                                                                                                                                                                                                                                                                                                                                                                   |
 | $targetLang         | The language into which the text should be translated. <br> default: en                                                                                                                                                                                                                                                                                                                                                                    |
 | $tagHandling        | Sets which kind of tags should be handled. Options currently available: "xml"                                                                                                                                                                                                                                                                                                                                             |
 | $ignoreTags         | Array of XML tags that indicate text not to be translated. <br> default: null                                                                                                                                                                                                                                                                                                                                                  |
@@ -123,21 +138,21 @@ Create a glossary
 $glossary = $deepl->createGlossary('MyGlossary', ['Hallo' => 'Hello'], 'de', 'en');
 ```
 
-| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| $name               | Glossary name
-| $entries            | Array of entries
-| $sourceLanguage     | The source language into which the glossary rule apply                                                                                                                                                                                                                                                                                                                                                                    |
-| $targetLanguage     | The target language into which the glossary rule apply                                                                                                                                                                                                                                                                                                                                             |
+| param           | Description                                            |
+|-----------------|--------------------------------------------------------|
+| $name           | Glossary name                                          |
+| $entries        | Array of entries                                       |
+| $sourceLanguage | The source language into which the glossary rule apply |
+| $targetLanguage | The target language into which the glossary rule apply |
 
 Delete a glossary
 ```php
 $glossary = $deepl->deleteGlossary($glossaryId);
 ```
 
-| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+| param       | Description                                           |
+|-------------|-------------------------------------------------------|
+| $glossaryId | Glossary uuid (set by DeepL when glossary is created) |
 
 List glossaries
 ```php
@@ -157,9 +172,9 @@ $glossaryInformation = $deepl->glossaryInformation($glossaryId);
 var_dump($glossaryInformation);
 ```
 
-| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+| param       | Description                                           |
+|-------------|-------------------------------------------------------|
+| $glossaryId | Glossary uuid (set by DeepL when glossary is created) |
 
 Get glossary entries
 ```php
@@ -169,9 +184,9 @@ foreach ($entries as $sourceLangText => $targetLangText) {
 }
 ```
 
-| param               | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| $glossaryId         | Glossary uuid (set by DeepL when glossary is created)
+| param       | Description                                           |
+|-------------|-------------------------------------------------------|
+| $glossaryId | Glossary uuid (set by DeepL when glossary is created) |
 
 ### Configuring cURL requests
 If you need to use a proxy, you can configure the underlying curl client to use one. You can also specify a timeout to avoid waiting for several minutes if Deepl is unreachable
@@ -231,3 +246,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-author]: https://github.com/Baby-Markt
 [link-contributors]: ../../contributors
 [link-deepl]: https://www.deepl.com/docs-api/introduction/
+[link-deepl-client-libraries]:https://www.deepl.com/en/docs-api/accessing-the-api/client-libraries/
+[link-deepl-php-lib-github]:https://github.com/DeepLcom/deepl-php

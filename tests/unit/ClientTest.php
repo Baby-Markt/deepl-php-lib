@@ -203,7 +203,7 @@ class ClientTest extends TestCase
     public function testBuildBaseUrl()
     {
         $authKey     = '123456';
-        $expectedUrl = 'https://api.deepl.com/v2/translate';
+        $expectedUrl = 'https://api-free.deepl.com/v2/translate';
         $testSubject = new Client($authKey);
         $result      = $testSubject->buildBaseUrl();
 

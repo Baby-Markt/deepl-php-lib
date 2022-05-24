@@ -16,6 +16,13 @@ class GlossaryTest extends TestCase
     protected static $authKey = false;
 
     /**
+     * DeepL Auth Key.
+     *
+     * @var string
+     */
+    protected static $apiHost;
+
+    /**
      * Setup DeepL Auth Key.
      */
     public static function setUpBeforeClass(): void
@@ -23,17 +30,19 @@ class GlossaryTest extends TestCase
         parent::setUpBeforeClass();
 
         $authKey = getenv('DEEPL_AUTH_KEY');
+        $apiHost = getenv('DEEPL_HOST') ?: 'api-free.deepl.com';
 
         if ($authKey === false) {
-            return;
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
         self::$authKey = $authKey;
+        self::$apiHost = $apiHost;
     }
 
     public static function tearDownAfterClass(): void
     {
-        $glossaryAPI = new Glossary(self::$authKey);
+        $glossaryAPI = new Glossary(self::$authKey, 2, self::$apiHost);
 
         $glossariesResponse = $glossaryAPI->listGlossaries();
 
@@ -62,7 +71,7 @@ class GlossaryTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new Glossary(self::$authKey);
+        $deepl    = new Glossary(self::$authKey, 2, self::$apiHost);
         $entries  = ['Hallo' => 'Hello'];
         $glossary = $deepl->createGlossary('test', $entries, 'de', 'en');
 
@@ -80,7 +89,7 @@ class GlossaryTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl      = new Glossary(self::$authKey);
+        $deepl      = new Glossary(self::$authKey, 2, self::$apiHost);
         $glossaries = $deepl->listGlossaries();
 
         self::assertNotEmpty($glossaries['glossaries']);
@@ -97,7 +106,7 @@ class GlossaryTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl        = new Glossary(self::$authKey);
+        $deepl        = new Glossary(self::$authKey, 2, self::$apiHost);
         $information = $deepl->glossaryInformation($glossaryId);
 
         self::assertArrayHasKey('glossary_id', $information);
@@ -114,7 +123,7 @@ class GlossaryTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl   = new Glossary(self::$authKey);
+        $deepl   = new Glossary(self::$authKey, 2, self::$apiHost);
         $entries = $deepl->glossaryEntries($glossaryId);
 
         self::assertEquals($entries, ['Hallo' => 'Hello']);
@@ -131,7 +140,7 @@ class GlossaryTest extends TestCase
             self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
         }
 
-        $deepl    = new Glossary(self::$authKey);
+        $deepl    = new Glossary(self::$authKey, 2, self::$apiHost);
         $response = $deepl->deleteGlossary($glossaryId);
 
         self::assertNull($response);

@@ -1,7 +1,8 @@
 {
+    "abandoned": "deeplcom/deepl-php",
     "name": "babymarkt/deepl-php-lib",
     "type": "library",
-    "description": "DeepL API Client Library supporting PHP >= 7.3 && PHP < 8.1",
+    "description": "DeepL API Client Library supporting PHP >= 7.3 && PHP <= 8.1",
     "keywords": [
       "babymarkt",
       "deepl",
@@ -19,7 +20,7 @@
         }
     ],
     "require": {
-        "php": ">=7.3 <8.1",
+        "php": ">=7.3 <8.2",
         "ext-json": "*",
         "ext-curl": "*"
     },
