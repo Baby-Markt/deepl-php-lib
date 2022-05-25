@@ -145,4 +145,21 @@ class GlossaryTest extends TestCase
 
         self::assertNull($response);
     }
+
+    public function testClientBugOnManyRequests_itThrowsWhenMakingARequestAfterADeleteRequest()
+    {
+        if (self::$authKey === false) {
+            self::markTestSkipped('DeepL Auth Key (DEEPL_AUTH_KEY) is not configured.');
+        }
+
+        $deepl    = new Glossary(self::$authKey);
+        $entries  = ['Hallo' => 'Hello'];
+        $glossary = $deepl->createGlossary('test', $entries, 'de', 'en');
+
+        $response = $deepl->deleteGlossary($glossary['glossary_id']);
+        self::assertNull($response);
+
+        // This line throws error "The Response seems to not be valid JSON."
+        $glossary = $deepl->createGlossary('test', $entries, 'de', 'en');
+    }
 }
